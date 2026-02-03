@@ -20,7 +20,7 @@ export const Page: React.FC = () => {
       />
 
       <section className="storybook-page">
-        <h1>디스코드 깃허브 웹훅 테스트</h1>
+        <h1>디스코드 깃허브 웹훅 테스트 2트</h1>
         <h2>Pages in Storybook</h2>
         <p>
           We recommend building UIs with a{' '}

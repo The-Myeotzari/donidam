@@ -1,0 +1,20 @@
+name: Discord Dev Push Notify
+
+on:
+  push:
+    branches: [dev]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send push message to Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          REPO: ${{ github.repository }}
+          ACTOR: ${{ github.actor }}
+          REF: ${{ github.ref_name }}
+          URL: ${{ github.event.compare }}
+        run: |
+          payload=$(jq -n --arg content "📦 **Push to $REF** ($REPO)\nby $ACTOR\n$URL" '{content:$content}')
+          curl -sS -H "Content-Type: application/json" -X POST -d "$payload" "$DISCORD_WEBHOOK"
