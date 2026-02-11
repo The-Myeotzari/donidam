@@ -6,9 +6,9 @@ addAssignees: author
 
 # A list of reviewers to be added to pull requests (GitHub user name)
 reviewers: 
-  - jojh0323@pukyong.ac.kr
-  - Ol.MinJe@gmail.com
-  - hyunhyun0096@naver.com
+  - Catsmanager
+  - Jojunhyeong
+  - OlMinje
 
 # A number of reviewers added to the pull request
 # Set 0 to add all the reviewers (default: 0)
