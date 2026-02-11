@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import QueryProvider from '@/lib/react-query/QueryProvider'
+import './globals.css'
 
 export const metadata: Metadata = {
   title: '돈이담',

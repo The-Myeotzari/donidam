@@ -1,26 +1,355 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Theme Tokens (HEX) */
+@theme {
+  --font-sans: "Noto Sans KR", system-ui, -apple-system, "Segoe UI", Roboto,
+    "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+
+  --radius: 1rem;
+
+  /* Semantic */
+  --background: #fbfaf7;
+  --foreground: #2b2724;
+
+  --card: #ffffff;
+  --card-foreground: #2b2724;
+
+  --popover: #ffffff;
+  --popover-foreground: #2b2724;
+
+  --primary: #26bf95;
+  --primary-foreground: #ffffff;
+
+  --secondary: #4fa9f2;
+  --secondary-foreground: #ffffff;
+
+  --muted: #f5f1ea;
+  --muted-foreground: #837b6e;
+
+  --accent: #ffd34d;
+  --accent-foreground: #2b2724;
+
+  --family: #f35c8c;
+  --family-foreground: #ffffff;
+
+  --success: #36b86e;
+  --success-foreground: #ffffff;
+
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  --border: #ece6dd;
+  --input: #ece6dd;
+  --ring: #26bf95;
+
+  /* ===== Shadows ===== */
+  --shadow-soft: 0 4px 20px -4px rgba(43, 39, 36, 0.08);
+  --shadow-card: 0 8px 30px -8px rgba(43, 39, 36, 0.1);
+  --shadow-float: 0 12px 40px -12px rgba(43, 39, 36, 0.15);
+
+  /* ===== Gradient Stops ===== */
+  --mint-500: #26bf95;
+  --mint-400: #33cfa4;
+
+  --sky-500: #4fa9f2;
+  --sky-400: #6bb6f0;
+
+  --warm-50: #fbfaf7;
+  --warm-100: #f4efe8;
+
+  --family-500: #f35c8c;
+  --family-400: #f279a0;
+
+  --success-500: #36b86e;
+  --success-400: #4fd08a;
+
+  /* Categories */
+  --category-food: #f58e3d;
+  --category-transport: #4fa9ea;
+  --category-shopping: #ec639b;
+  --category-education: #9d63e1;
+  --category-health: #36b86e;
+  --category-entertainment: #f5c43f;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Dark mode overrides */
+.dark {
+  --background: #1a1817;
+  --foreground: #f6f1ea;
+
+  --card: #24211f;
+  --card-foreground: #f6f1ea;
+
+  --popover: #24211f;
+  --popover-foreground: #f6f1ea;
+
+  --primary: #40d4aa;
+  --secondary: #4f9fe0;
+
+  --muted: #332f2d;
+  --muted-foreground: #b0a89d;
+
+  --accent: #f5c43f;
+  --accent-foreground: #1a1817;
+
+  --family: #eb5f87;
+  --success: #40c981;
+
+  --destructive: #dc4646;
+
+  --border: #332f2d;
+  --input: #332f2d;
+  --ring: #40d4aa;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Base */
+@layer base {
+  html,
+  body {
+    font-family: var(--font-sans);
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  button {
+    @apply cursor-pointer;
   }
 }
 
-body {
-  background: var(--background);
+/* Custom Utilities (@utility) */
+
+/* Shadows */
+@utility card-shadow {
+  box-shadow: var(--shadow-card);
+}
+@utility float-shadow {
+  box-shadow: var(--shadow-float);
+}
+@utility soft-shadow {
+  box-shadow: var(--shadow-soft);
+}
+
+/* Gradients */
+@utility gradient-mint {
+  background: linear-gradient(135deg, var(--mint-500) 0%, var(--mint-400) 100%);
+}
+@utility gradient-sky {
+  background: linear-gradient(135deg, var(--sky-500) 0%, var(--sky-400) 100%);
+}
+@utility gradient-warm {
+  background: linear-gradient(135deg, var(--warm-50) 0%, var(--warm-100) 100%);
+}
+@utility gradient-family {
+  background: linear-gradient(135deg, var(--family-500) 0%, var(--family-400) 100%);
+}
+@utility gradient-success {
+  background: linear-gradient(135deg, var(--success-500) 0%, var(--success-400) 100%);
+}
+
+/* Text gradient */
+@utility text-gradient-mint {
+  background: linear-gradient(135deg, var(--mint-500) 0%, var(--mint-400) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Category helpers */
+@utility text-category-food {
+  color: var(--category-food);
+}
+@utility text-category-transport {
+  color: var(--category-transport);
+}
+@utility text-category-shopping {
+  color: var(--category-shopping);
+}
+@utility text-category-education {
+  color: var(--category-education);
+}
+@utility text-category-health {
+  color: var(--category-health);
+}
+@utility text-category-entertainment {
+  color: var(--category-entertainment);
+}
+
+/* Animations */
+@utility animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+@utility animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+@utility animate-bounce-soft {
+  animation: bounce-soft 2s ease-in-out infinite;
+}
+@utility animate-slide-up {
+  animation: slide-up 0.4s ease-out;
+}
+@utility animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+@utility animate-scale-in {
+  animation: scale-in 0.3s ease-out;
+}
+
+/* toast */
+@utility animate-toast-slide {
+  animation: toast-slide-up-down 3s ease-in-out forwards;
+}
+
+/* Semantic Color Utilities */
+@utility bg-background {
+  background-color: var(--background);
+}
+@utility text-foreground {
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+@utility bg-card {
+  background-color: var(--card);
+}
+@utility text-card-foreground {
+  color: var(--card-foreground);
+}
+
+@utility bg-popover {
+  background-color: var(--popover);
+}
+@utility text-popover-foreground {
+  color: var(--popover-foreground);
+}
+
+@utility bg-primary {
+  background-color: var(--primary);
+}
+@utility text-primary {
+  color: var(--primary);
+}
+@utility text-primary-foreground {
+  color: var(--primary-foreground);
+}
+
+@utility bg-secondary {
+  background-color: var(--secondary);
+}
+@utility text-secondary-foreground {
+  color: var(--secondary-foreground);
+}
+
+@utility bg-muted {
+  background-color: var(--muted);
+}
+@utility text-muted-foreground {
+  color: var(--muted-foreground);
+}
+
+@utility bg-accent {
+  background-color: var(--accent);
+}
+@utility text-accent-foreground {
+  color: var(--accent-foreground);
+}
+
+@utility bg-family {
+  background-color: var(--family);
+}
+@utility text-family-foreground {
+  color: var(--family-foreground);
+}
+
+@utility bg-success {
+  background-color: var(--success);
+}
+@utility text-success-foreground {
+  color: var(--success-foreground);
+}
+
+@utility bg-destructive {
+  background-color: var(--destructive);
+}
+@utility text-destructive-foreground {
+  color: var(--destructive-foreground);
+}
+
+@utility border-border {
+  border-color: var(--border);
+}
+@utility ring-ring {
+  --tw-ring-color: var(--ring);
+}
+
+
+/* Keyframes */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes bounce-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes toast-slide-up-down {
+  0% { opacity: 0; transform: translateY(50px); }
+  15% { opacity: 1; transform: translateY(0); }
+  85% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(50px); }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(131, 123, 110, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(131, 123, 110, 0.5);
+}
+
+/* Misc */
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
 }
