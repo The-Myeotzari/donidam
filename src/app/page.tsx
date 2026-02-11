@@ -8,5 +8,5 @@ export default function Home() {
     queryFn: async () => 'react-query-ok',
   })
 
-  return <div>{data}</div>
+  return <div className='gradient-family bg-background text-muted-foreground'>{data}</div>
 }
