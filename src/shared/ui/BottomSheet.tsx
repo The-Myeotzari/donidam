@@ -15,31 +15,31 @@ const useMounted = () => {
 }
 
 // 내부 Context 전용
-interface ButtomSheetContextValue {
+interface BottomSheetContextValue {
   isOpen: boolean
   onClose: () => void
   headerId: string
 }
 
-const ButtomSheetContext = createContext<ButtomSheetContextValue | undefined>(undefined)
+const BottomSheetContext = createContext<BottomSheetContextValue | undefined>(undefined)
 
-const useButtomSheetContext = () => {
-  const context = useContext(ButtomSheetContext)
+const useBottomSheetContext = () => {
+  const context = useContext(BottomSheetContext)
   if (!context)
-    throw new Error('ButtomSheet 서브 컴포넌트는 ButtomSheet 내부에서 사용되어야 합니다.')
+    throw new Error('BottomSheet 서브 컴포넌트는 BottomSheet 내부에서 사용되어야 합니다.')
   return context
 }
 
 // 외부 Props 타입
-interface ButtomSheetProps {
+interface BottomSheetProps {
   isOpen: boolean
   onClose: () => void
   children: React.ReactNode
   className?: string
 }
 
-// ButtomSheet 컴포넌트
-export const ButtomSheet = ({ isOpen, onClose, children, className }: ButtomSheetProps) => {
+// BottomSheet 컴포넌트
+export const BottomSheet = ({ isOpen, onClose, children, className }: BottomSheetProps) => {
   const isMounted = useMounted()
   const sheetRef = useRef<HTMLDivElement>(null)
   const headerId = React.useId()
@@ -89,7 +89,7 @@ export const ButtomSheet = ({ isOpen, onClose, children, className }: ButtomShee
   if (!isMounted || !isOpen) return null
 
   return createPortal(
-    <ButtomSheetContext value={{ isOpen, onClose, headerId }}>
+    <BottomSheetContext value={{ isOpen, onClose, headerId }}>
       <div className="fixed inset-0 z-50 flex items-end justify-center">
         <div className="fixed inset-0 bg-black/40" onClick={onClose} />
         <div
@@ -106,19 +106,19 @@ export const ButtomSheet = ({ isOpen, onClose, children, className }: ButtomShee
           {children}
         </div>
       </div>
-    </ButtomSheetContext>,
+    </BottomSheetContext>,
     document.body,
   )
 }
 
 // Header
-interface ButtomSheetHeaderProps {
+interface BottomSheetHeaderProps {
   children: React.ReactNode
   className?: string
 }
 
-const ButtomSheetHeader = ({ children, className }: ButtomSheetHeaderProps) => {
-  const { headerId } = useButtomSheetContext()
+const BottomSheetHeader = ({ children, className }: BottomSheetHeaderProps) => {
+  const { headerId } = useBottomSheetContext()
   return (
     <h2
       id={headerId}
@@ -130,7 +130,7 @@ const ButtomSheetHeader = ({ children, className }: ButtomSheetHeaderProps) => {
 }
 
 // Content (Body)
-const ButtomSheetContent = ({
+const BottomSheetContent = ({
   children,
   className,
 }: {
@@ -141,12 +141,12 @@ const ButtomSheetContent = ({
 }
 
 // Close (닫기 버튼)
-const ButtomSheetClose = ({
+const BottomSheetClose = ({
   children,
 }: {
   children: React.ReactElement<React.HTMLAttributes<HTMLElement>>
 }) => {
-  const { onClose } = useButtomSheetContext()
+  const { onClose } = useBottomSheetContext()
 
   return React.cloneElement(children, {
     onClick: (e: React.MouseEvent<HTMLElement>) => {
@@ -156,6 +156,6 @@ const ButtomSheetClose = ({
   })
 }
 
-ButtomSheet.Header = ButtomSheetHeader
-ButtomSheet.Content = ButtomSheetContent
-ButtomSheet.Close = ButtomSheetClose
+BottomSheet.Header = BottomSheetHeader
+BottomSheet.Content = BottomSheetContent
+BottomSheet.Close = BottomSheetClose

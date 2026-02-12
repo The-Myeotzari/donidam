@@ -1,11 +1,11 @@
-import { ButtomSheet } from '@/shared/ui/ButtomSheet'
+import { BottomSheet } from '@/shared/ui/BottomSheet'
 import { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { X } from 'lucide-react'
 import { useState } from 'react'
 
-const meta: Meta<typeof ButtomSheet> = {
-  title: 'ui-kit/ButtomSheet',
-  component: ButtomSheet,
+const meta: Meta<typeof BottomSheet> = {
+  title: 'ui-kit/BottomSheet',
+  component: BottomSheet,
   parameters: {
     layout: 'centered',
   },
@@ -15,7 +15,7 @@ const meta: Meta<typeof ButtomSheet> = {
   },
 }
 export default meta
-type Story = StoryObj<typeof ButtomSheet>
+type Story = StoryObj<typeof BottomSheet>
 
 export const Default: Story = {
   name: '1. 필터 선택형 (X 버튼)',
@@ -31,27 +31,27 @@ export const Default: Story = {
           필터 시트 열기
         </button>
 
-        <ButtomSheet isOpen={isOpen} onClose={() => setIsOpen(false)}>
-          <ButtomSheet.Header className="">
+        <BottomSheet isOpen={isOpen} onClose={() => setIsOpen(false)}>
+          <BottomSheet.Header className="">
             <span className="text-xl font-bold">조회 조건 설정</span>
-            <ButtomSheet.Close>
+            <BottomSheet.Close>
               <button aria-label="닫기">
                 <X size={24} />
               </button>
-            </ButtomSheet.Close>
-          </ButtomSheet.Header>
+            </BottomSheet.Close>
+          </BottomSheet.Header>
 
-          <ButtomSheet.Content>
+          <BottomSheet.Content>
             <div className="space-y-6 py-4">
               <p>원하시는 조회 기간과 카테고리를 선택해주세요.</p>
               <div className="h-40 bg-muted/20 border-2 border-dashed">필터 옵션 영역</div>
             </div>
-          </ButtomSheet.Content>
+          </BottomSheet.Content>
 
           <div className="mt-8">
             <button onClick={() => setIsOpen(false)}>12개 결과 보기</button>
           </div>
-        </ButtomSheet>
+        </BottomSheet>
       </div>
     )
   },
@@ -71,10 +71,10 @@ export const LongContent: Story = {
           긴 컨텐츠 보기
         </button>
 
-        <ButtomSheet isOpen={isOpen} onClose={() => setIsOpen(false)}>
-          <ButtomSheet.Header>스크롤 확인</ButtomSheet.Header>
+        <BottomSheet isOpen={isOpen} onClose={() => setIsOpen(false)}>
+          <BottomSheet.Header>스크롤 확인</BottomSheet.Header>
 
-          <ButtomSheet.Content className="max-h-[50vh]">
+          <BottomSheet.Content className="max-h-[50vh]">
             <div className="space-y-4">
               {Array.from({ length: 15 }).map((_, i) => (
                 <div key={i} className="p-4 bg-muted/30 rounded-lg">
@@ -82,16 +82,16 @@ export const LongContent: Story = {
                 </div>
               ))}
             </div>
-          </ButtomSheet.Content>
+          </BottomSheet.Content>
 
           <div className="mt-4">
-            <ButtomSheet.Close>
+            <BottomSheet.Close>
               <button className="w-full py-3 bg-foreground text-background rounded-xl font-medium">
                 닫기
               </button>
-            </ButtomSheet.Close>
+            </BottomSheet.Close>
           </div>
-        </ButtomSheet>
+        </BottomSheet>
       </div>
     )
   },
