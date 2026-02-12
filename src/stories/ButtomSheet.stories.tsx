@@ -58,6 +58,7 @@ export const Default: Story = {
 }
 
 export const LongContent: Story = {
+  name: '2. 긴 컨텐츠',
   render: () => {
     const [isOpen, setIsOpen] = useState(false)
 
