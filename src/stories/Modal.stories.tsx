@@ -1,5 +1,5 @@
 import { Modal } from '@/shared/ui/Modal'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { useState } from 'react'
 
 const meta: Meta<typeof Modal> = {
