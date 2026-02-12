@@ -89,7 +89,7 @@ export const ButtomSheet = ({ isOpen, onClose, children, className }: ButtomShee
   if (!isMounted || !isOpen) return null
 
   return createPortal(
-    <ButtomSheetContext.Provider value={{ isOpen, onClose, headerId }}>
+    <ButtomSheetContext value={{ isOpen, onClose, headerId }}>
       <div className="fixed inset-0 z-50 flex items-end justify-center">
         <div className="fixed inset-0 bg-black/40" onClick={onClose} />
         <div
@@ -106,7 +106,7 @@ export const ButtomSheet = ({ isOpen, onClose, children, className }: ButtomShee
           {children}
         </div>
       </div>
-    </ButtomSheetContext.Provider>,
+    </ButtomSheetContext>,
     document.body,
   )
 }
