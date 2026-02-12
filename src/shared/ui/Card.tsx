@@ -26,6 +26,14 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   onClick?: React.MouseEventHandler<HTMLElement>
 }
 
+const variants = {
+  default: 'bg-card text-card-foreground',
+  primary: 'gradient-mint text-primary-foreground',
+  secondary: 'gradient-sky text-secondary-foreground',
+  family: 'gradient-family text-family-foreground',
+  success: 'gradient-success text-success-foreground',
+} as const
+
 // 메인 Card 컴포넌트
 export const Card = ({
   children,
@@ -38,13 +46,6 @@ export const Card = ({
 }: CardProps) => {
   const labelId = useId()
 
-  const variants = {
-    default: 'bg-card text-card-foreground',
-    primary: 'gradient-mint text-primary-foreground',
-    secondary: 'gradient-sky text-secondary-foreground',
-    family: 'gradient-family text-family-foreground',
-    success: 'gradient-success text-success-foreground',
-  }
   const isClickable = !!onClick || hoverable
 
   return (
