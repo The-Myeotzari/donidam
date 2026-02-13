@@ -17,7 +17,8 @@ const useMounted = () => {
 
 // ToastContainer
 export const ToastContainer = ({ toasts }: { toasts: ToastItem[] }) => {
-  if (!useMounted) return null
+  const isMounted = useMounted()
+  if (!isMounted) return null
 
   return createPortal(
     <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-3 w-fit max-w-[calc(100vw-2rem)]">
