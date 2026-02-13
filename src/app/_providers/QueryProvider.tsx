@@ -1,6 +1,6 @@
 'use client'
 
-import { queryClient as baseClient } from '@/app/_providers/queryClient'
+import { queryClient as baseClient } from '@/app/_providers/QueryClient'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactNode, useState } from 'react'
 
