@@ -1,4 +1,5 @@
-import QueryProvider from '@/shared/lib/react-query/QueryProvider'
+import QueryProvider from '@/app/_providers/QueryProvider'
+import { ToastProvider } from '@/app/_providers/ToastProvier'
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
@@ -24,7 +25,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko">
       <body>
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </QueryProvider>
       </body>
     </html>
   )
