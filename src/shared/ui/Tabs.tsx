@@ -72,7 +72,7 @@ export const TabsList = ({ children, className }: TabsListProps) => {
     <div
       role="tablist"
       className={cn(
-        'w-full h-10  flex gap-1.5items-center justify-center rounded-md p-1 text-muted-foreground',
+        'w-full flex gap-1.5items-center justify-center rounded-md p-1 text-muted-foreground',
         variant === 'box' && 'bg-muted rounded-xl p-1',
         variant === 'capsule' && 'gap-2',
         className,
