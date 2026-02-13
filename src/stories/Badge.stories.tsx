@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 import { Badge } from "@/shared/ui/Badge"
 import { Calendar, Loader2, X } from "lucide-react"
 
