@@ -1,14 +1,15 @@
-import { ToastProvider, useToast } from '@/app/_providers/ToastProvier'
+import { ToastItem, ToastProvider, useToast } from '@/app/_providers/ToastProvier'
 import { ToastRoot } from '@/shared/ui/Toast'
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
 // 테스트용 버튼 컴포넌트
+type ToastSceneProps = Omit<ToastItem, 'id'>
 const ToastScene = ({
   type = 'info',
   title = '알림',
   description = '내용입니다.',
   duration = 3000,
-}: any) => {
+}: ToastSceneProps) => {
   const { addToast } = useToast()
 
   return (

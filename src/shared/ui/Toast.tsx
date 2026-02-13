@@ -3,15 +3,21 @@
 import { ToastItem, useToast } from '@/app/_providers/ToastProvier'
 import cn from '@/shared/lib/cn'
 import { X } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
+
+const emptySubscribe = () => () => {}
+const useMounted = () => {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  )
+}
 
 // ToastContainer
 export const ToastContainer = ({ toasts }: { toasts: ToastItem[] }) => {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
-
-  if (!mounted) return null
+  if (!useMounted) return null
 
   return createPortal(
     <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-3 w-fit max-w-[calc(100vw-2rem)]">
