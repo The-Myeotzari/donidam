@@ -119,11 +119,11 @@ export const Accordion = React.forwardRef<HTMLDivElement, AccordionProps>(
     )
 
     return (
-      <AccordionContext.Provider value={contextValue}>
+      <AccordionContext value={contextValue}>
         <div ref={ref} className={cn('divide-y divide-border bg-background', className)} {...props}>
           {children}
         </div>
-      </AccordionContext.Provider>
+      </AccordionContext>
     )
   },
 )
@@ -193,14 +193,53 @@ export const AccordionTrigger = React.forwardRef<HTMLButtonElement, AccordionTri
     }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      if (e.key === 'Home' || e.key === 'End') {
-        e.preventDefault()
-        const allTriggers = document.querySelectorAll(
-          '[role="button"][aria-controls]',
-        ) as NodeListOf<HTMLButtonElement>
-        const triggerArray = Array.from(allTriggers)
-        const targetIndex = e.key === 'Home' ? 0 : triggerArray.length - 1
-        triggerArray[targetIndex]?.focus()
+      if (isDisabled) return
+
+      const allTriggers = document.querySelectorAll(
+        '[data-accordion-trigger]',
+      ) as NodeListOf<HTMLButtonElement>
+      const triggerArray = Array.from(allTriggers).filter(
+        (trigger) => !trigger.disabled && !trigger.hasAttribute('aria-disabled'),
+      )
+      const currentIndex = triggerArray.findIndex((trigger) => trigger.id === triggerId)
+
+      switch (e.key) {
+        case 'Home':
+          e.preventDefault()
+          triggerArray[0]?.focus()
+          break
+
+        case 'End':
+          e.preventDefault()
+          triggerArray[triggerArray.length - 1]?.focus()
+          break
+
+        case 'ArrowDown':
+          e.preventDefault()
+          if (currentIndex < triggerArray.length - 1) {
+            triggerArray[currentIndex + 1]?.focus()
+          } else {
+            triggerArray[0]?.focus()
+          }
+          break
+
+        case 'ArrowUp':
+          e.preventDefault()
+          if (currentIndex > 0) {
+            triggerArray[currentIndex - 1]?.focus()
+          } else {
+            triggerArray[triggerArray.length - 1]?.focus()
+          }
+          break
+
+        case ' ':
+        case 'Enter':
+          e.preventDefault()
+          toggleItem(value)
+          break
+
+        default:
+          break
       }
     }
 
@@ -210,6 +249,7 @@ export const AccordionTrigger = React.forwardRef<HTMLButtonElement, AccordionTri
           ref={ref}
           id={triggerId}
           type="button"
+          data-accordion-trigger="" 
           className={cn(
             'flex flex-1 items-center justify-between py-4 font-medium transition-all',
             'text-foreground hover:text-primary hover:underline',
