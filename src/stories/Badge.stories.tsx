@@ -3,7 +3,7 @@ import { Badge } from "@/shared/ui/Badge"
 import { Calendar, Loader2, X } from "lucide-react"
 
 const meta: Meta<typeof Badge> = {
-  title: "UI/Badge",
+  title: "ui-kit/Badge",
   component: Badge,
   parameters: {
     layout: "centered",
