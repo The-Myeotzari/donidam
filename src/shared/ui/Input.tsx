@@ -20,7 +20,8 @@ const useInputContext = () => {
 
 /* Style System (통합) */
 const inputStyles = {
-  root: 'relative w-full',
+  root: 'w-full',
+  control: 'relative w-full',
   field: {
     base: cn(
       'w-full rounded-3xl border bg-background ring-offset-background',
@@ -37,12 +38,8 @@ const inputStyles = {
       md: 'h-10 text-base px-3',
       lg: 'h-12 text-lg px-4',
     },
-    // 옵션: 오른쪽 요소 있을 때 텍스트 겹침 방지용
-    withRight: 'pr-10',
-    withRightWide: 'pr-12',
   },
   right: {
-    // 아이콘/토글 공통 위치
     base: 'absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground',
   },
   message: {
@@ -55,6 +52,7 @@ const inputStyles = {
 } as const
 
 /* Root */
+
 interface InputRootProps {
   children: React.ReactNode
   variant?: InputVariant
@@ -62,12 +60,47 @@ interface InputRootProps {
   className?: string
 }
 
+/**
+ * children에서 <Input.Message>만 자동 분리해서
+ * - control(relative) 안에는 Field/Icon/Toggle만
+ * - message는 아래에 렌더
+ */
+
+const isInputMessage = (node: React.ReactNode): node is React.ReactElement => {
+  if (!React.isValidElement(node)) return false
+
+  const type = node.type
+
+  return (
+    typeof type !== 'string' &&
+    'displayName' in type &&
+    type.displayName === 'InputMessage'
+  )
+}
+
 const InputRoot = ({ children, variant = 'default', size = 'md', className }: InputRootProps) => {
   const id = React.useId()
 
+  const childArray = React.Children.toArray(children)
+
+  const messages: React.ReactNode[] = []
+  const controlChildren: React.ReactNode[] = []
+
+ childArray.forEach((child) => {
+  if (isInputMessage(child)) {
+    messages.push(child)
+  } else {
+    controlChildren.push(child)
+  }
+})
+
+
   return (
     <InputContext.Provider value={{ id, variant, size }}>
-      <div className={cn(inputStyles.root, className)}>{children}</div>
+      <div className={cn(inputStyles.root, className)}>
+        <div className={inputStyles.control}>{controlChildren}</div>
+        {messages.length > 0 ? <div>{messages}</div> : null}
+      </div>
     </InputContext.Provider>
   )
 }
@@ -95,7 +128,6 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
     )
   },
 )
-
 InputField.displayName = 'InputField'
 
 /* Right Icon */
@@ -107,8 +139,9 @@ interface InputIconProps {
 const InputIcon = ({ children, className }: InputIconProps) => {
   return <div className={cn(inputStyles.right.base, className)}>{children}</div>
 }
+InputIcon.displayName = 'InputIcon'
 
-/* Password Toggle (정렬만 담당 — 토글 기능은 별도 개선 필요) */
+/* Password Toggle */
 const InputPasswordToggle = () => {
   const [visible, setVisible] = React.useState(false)
 
@@ -126,6 +159,7 @@ const InputPasswordToggle = () => {
     </button>
   )
 }
+InputPasswordToggle.displayName = 'InputPasswordToggle'
 
 /* Message */
 interface InputMessageProps {
@@ -137,17 +171,12 @@ const InputMessage = ({ children, className }: InputMessageProps) => {
   const { variant } = useInputContext()
 
   return (
-    <p
-      className={cn(
-        inputStyles.message.base,
-        inputStyles.message.variants[variant],
-        className,
-      )}
-    >
+    <p className={cn(inputStyles.message.base, inputStyles.message.variants[variant], className)}>
       {children}
     </p>
   )
 }
+InputMessage.displayName = 'InputMessage'
 
 export const Input = Object.assign(InputRoot, {
   Field: InputField,

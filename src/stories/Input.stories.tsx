@@ -9,14 +9,8 @@ const meta: Meta<typeof Input> = {
     layout: 'centered',
   },
   argTypes: {
-    variant: {
-      control: 'radio',
-      options: ['default', 'error'],
-    },
-    size: {
-      control: 'radio',
-      options: ['sm', 'md', 'lg'],
-    },
+    variant: { control: 'radio', options: ['default', 'error'] },
+    size: { control: 'radio', options: ['sm', 'md', 'lg'] },
     className: { control: false },
     children: { control: false },
   },
@@ -25,34 +19,34 @@ const meta: Meta<typeof Input> = {
     size: 'md',
   },
 }
-export default meta
 
+export default meta
 type Story = StoryObj<typeof Input>
+
+const Wrap = ({ children }: { children: React.ReactNode }) => (
+  <div style={{ width: 360 }}>{children}</div>
+)
 
 /* 기본 */
 export const Default: Story = {
   render: (args) => (
-    <div style={{ width: 360 }}>
+    <Wrap>
       <Input {...args}>
         <Input.Field placeholder="입력해보세요" />
       </Input>
-    </div>
+    </Wrap>
   ),
 }
 
 /* 메세지 포함 */
 export const WithMessage: Story = {
   render: (args) => (
-    <div style={{ width: 360 }}>
+    <Wrap>
       <Input {...args}>
-        <div className="relative">
-          <Input.Field placeholder="이메일" />
-          {/* 아이콘/토글이 있으면 여기 안에 */}
-        </div>
-
+        <Input.Field placeholder="이메일" />
         <Input.Message>helper message</Input.Message>
       </Input>
-    </div>
+    </Wrap>
   ),
 }
 
@@ -60,54 +54,53 @@ export const WithMessage: Story = {
 export const Error: Story = {
   args: { variant: 'error' },
   render: (args) => (
-    <div style={{ width: 360 }}>
+    <Wrap>
       <Input {...args}>
         <Input.Field placeholder="이메일" defaultValue="wrong@email" />
         <Input.Message>올바른 이메일 형식이 아닙니다.</Input.Message>
       </Input>
-    </div>
+    </Wrap>
   ),
 }
 
 /* 우측 아이콘 */
 export const WithRightIcon: Story = {
   render: (args) => (
-    <div style={{ width: 360 }}>
+    <Wrap>
       <Input {...args}>
         <div className="relative">
           <Input.Field placeholder="검색" className="pr-10" />
           <Input.Icon>🔍</Input.Icon>
         </div>
       </Input>
-    </div>
+    </Wrap>
   ),
 }
 
 /* 비밀번호 토글 */
 export const Password: Story = {
   render: (args) => (
-    <div style={{ width: 360 }}>
+    <Wrap>
       <Input {...args}>
         <div className="relative">
           <Input.Field type="password" placeholder="비밀번호" className="pr-12" />
           <Input.InputPasswordToggle />
         </div>
-
         <Input.Message>8자 이상 입력하세요.</Input.Message>
       </Input>
-    </div>
+    </Wrap>
   ),
 }
 
 /* Disabled */
 export const Disabled: Story = {
   render: (args) => (
-    <div style={{ width: 360 }}>
+    <Wrap>
       <Input {...args}>
         <Input.Field placeholder="비활성" disabled />
         <Input.Message>disabled 상태</Input.Message>
       </Input>
-    </div>
+    </Wrap>
   ),
 }
 
