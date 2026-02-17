@@ -16,7 +16,10 @@ interface TooltipContextProps {
   setOpen: (open: boolean) => void
   disabled: boolean
   delayDuration: number
+  closeDelayDuration: number
   tooltipId: string
+  openTimerRef: React.RefObject<ReturnType<typeof setTimeout> | null>
+  closeTimerRef: React.RefObject<ReturnType<typeof setTimeout> | null>
 }
 
 const TooltipContext = createContext<TooltipContextProps | null>(null)
@@ -27,6 +30,34 @@ const useTooltipContext = () => {
     throw new Error('Tooltip 서브 컴포넌트는 Tooltip 내부에서 사용되어야 합니다.')
   }
   return context
+}
+
+const useSharedTimers = () => {
+  const openTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const clearOpen = () => {
+    if (openTimerRef.current) {
+      clearTimeout(openTimerRef.current)
+      openTimerRef.current = null
+    }
+  }
+
+  const clearClose = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current)
+      closeTimerRef.current = null
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      clearOpen()
+      clearClose()
+    }
+  }, [])
+
+  return { openTimerRef, closeTimerRef, clearOpen, clearClose }
 }
 
 interface TooltipProviderProps {
@@ -46,6 +77,7 @@ interface TooltipProps {
   defaultOpen?: boolean
   onOpenChange?: (open: boolean) => void
   delayDuration?: number
+  closeDelayDuration?: number
   disabled?: boolean
 }
 
@@ -55,27 +87,32 @@ export const Tooltip = ({
   defaultOpen = false,
   onOpenChange,
   delayDuration = 200,
+  closeDelayDuration = 100,
   disabled = false,
 }: TooltipProps) => {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen)
   const tooltipId = useId()
+  const { openTimerRef, closeTimerRef, clearOpen, clearClose } = useSharedTimers()
 
   const open = controlledOpen !== undefined ? controlledOpen : uncontrolledOpen
+
   const setOpen = (newOpen: boolean) => {
     if (disabled) return
-
     if (controlledOpen === undefined) {
       setUncontrolledOpen(newOpen)
     }
     onOpenChange?.(newOpen)
   }
 
-  const contextValue = {
+  const contextValue: TooltipContextProps = {
     open,
     setOpen,
     disabled,
     delayDuration,
+    closeDelayDuration,
     tooltipId,
+    openTimerRef,
+    closeTimerRef,
   }
 
   return <TooltipContext value={contextValue}>{children}</TooltipContext>
@@ -87,41 +124,50 @@ interface TooltipTriggerProps extends React.HTMLAttributes<HTMLButtonElement> {
 }
 
 const TooltipTrigger = React.forwardRef<HTMLButtonElement, TooltipTriggerProps>(
-  (
-    { asChild = false, children, onMouseEnter, onMouseLeave, onFocus, onBlur, onClick, ...props },
-    ref,
-  ) => {
-    const { open, setOpen, disabled, delayDuration, tooltipId } = useTooltipContext()
-    const openTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-    const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  ({ asChild = false, children, onMouseEnter, onMouseLeave, onFocus, onBlur, ...props }, ref) => {
+    const {
+      open,
+      setOpen,
+      disabled,
+      delayDuration,
+      closeDelayDuration,
+      tooltipId,
+      openTimerRef,
+      closeTimerRef,
+    } = useTooltipContext()
 
-    const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (disabled) return
-
+    const scheduleOpen = () => {
       if (closeTimerRef.current) {
         clearTimeout(closeTimerRef.current)
+        closeTimerRef.current = null
       }
       openTimerRef.current = setTimeout(() => {
         setOpen(true)
       }, delayDuration)
+    }
 
+    const scheduleClose = () => {
+      if (openTimerRef.current) {
+        clearTimeout(openTimerRef.current)
+        openTimerRef.current = null
+      }
+      closeTimerRef.current = setTimeout(() => {
+        setOpen(false)
+      }, closeDelayDuration)
+    }
+
+    const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (!disabled) scheduleOpen()
       onMouseEnter?.(e)
     }
 
     const handleMouseLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (openTimerRef.current) {
-        clearTimeout(openTimerRef.current)
-      }
-      closeTimerRef.current = setTimeout(() => {
-        setOpen(false)
-      }, 100)
-
+      scheduleClose()
       onMouseLeave?.(e)
     }
 
     const handleFocus = (e: React.FocusEvent<HTMLButtonElement>) => {
-      if (disabled) return
-      setOpen(true)
+      if (!disabled) setOpen(true)
       onFocus?.(e)
     }
 
@@ -130,50 +176,24 @@ const TooltipTrigger = React.forwardRef<HTMLButtonElement, TooltipTriggerProps>(
       onBlur?.(e)
     }
 
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (!disabled) {
-        setOpen(!open)
-      }
-      onClick?.(e)
+    const commonProps = {
+      onMouseEnter: handleMouseEnter,
+      onMouseLeave: handleMouseLeave,
+      onFocus: handleFocus,
+      onBlur: handleBlur,
+      'aria-describedby': open ? tooltipId : undefined,
     }
-
-    useEffect(() => {
-      return () => {
-        if (openTimerRef.current) {
-          clearTimeout(openTimerRef.current)
-        }
-        if (closeTimerRef.current) {
-          clearTimeout(closeTimerRef.current)
-        }
-      }
-    }, [])
 
     if (asChild && React.isValidElement(children)) {
       return React.cloneElement(children, {
         ref,
-        onMouseEnter: handleMouseEnter,
-        onMouseLeave: handleMouseLeave,
-        onFocus: handleFocus,
-        onBlur: handleBlur,
-        onClick: handleClick,
-        'aria-describedby': open ? tooltipId : undefined,
+        ...commonProps,
         ...props,
       } as Record<string, unknown>)
     }
 
     return (
-      <button
-        ref={ref}
-        type="button"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        onClick={handleClick}
-        aria-describedby={open ? tooltipId : undefined}
-        disabled={disabled}
-        {...props}
-      >
+      <button ref={ref} type="button" disabled={disabled} {...commonProps} {...props}>
         {children}
       </button>
     )
@@ -207,15 +227,37 @@ const TooltipContent = React.forwardRef<HTMLDivElement, TooltipContentProps>(
       alignOffset = 0,
       className,
       children,
+      onMouseEnter,
+      onMouseLeave,
       ...props
     },
     ref,
   ) => {
-    const { open, tooltipId, setOpen } = useTooltipContext()
+    const { open, setOpen, tooltipId, closeDelayDuration, openTimerRef, closeTimerRef } =
+      useTooltipContext()
     const contentRef = useRef<HTMLDivElement>(null)
     const [position, setPosition] = useState<Position>({ top: 0, left: 0 })
 
     React.useImperativeHandle(ref, () => contentRef.current as HTMLDivElement)
+
+    const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (closeTimerRef.current) {
+        clearTimeout(closeTimerRef.current)
+        closeTimerRef.current = null
+      }
+      onMouseEnter?.(e)
+    }
+
+    const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (openTimerRef.current) {
+        clearTimeout(openTimerRef.current)
+        openTimerRef.current = null
+      }
+      closeTimerRef.current = setTimeout(() => {
+        setOpen(false)
+      }, closeDelayDuration)
+      onMouseLeave?.(e)
+    }
 
     useLayoutEffect(() => {
       if (!open || !contentRef.current) return
@@ -272,33 +314,24 @@ const TooltipContent = React.forwardRef<HTMLDivElement, TooltipContentProps>(
       const viewportHeight = window.innerHeight
 
       if (left < 0) left = 8
-      if (left + contentRect.width > viewportWidth) {
-        left = viewportWidth - contentRect.width - 8
-      }
+      if (left + contentRect.width > viewportWidth) left = viewportWidth - contentRect.width - 8
       if (top < 0) top = 8
-      if (top + contentRect.height > viewportHeight) {
-        top = viewportHeight - contentRect.height - 8
-      }
+      if (top + contentRect.height > viewportHeight) top = viewportHeight - contentRect.height - 8
 
       setPosition({ top, left })
     }, [open, side, sideOffset, align, alignOffset])
 
     useEffect(() => {
       if (!open) return
-
       const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') {
-          setOpen(false)
-        }
+        if (e.key === 'Escape') setOpen(false)
       }
-
       document.addEventListener('keydown', handleKeyDown)
       return () => document.removeEventListener('keydown', handleKeyDown)
     }, [open, setOpen])
 
     useEffect(() => {
       if (!open) return
-
       const handleClickOutside = (e: MouseEvent) => {
         const target = e.target as Node
         if (contentRef.current && !contentRef.current.contains(target)) {
@@ -308,7 +341,6 @@ const TooltipContent = React.forwardRef<HTMLDivElement, TooltipContentProps>(
           }
         }
       }
-
       document.addEventListener('mousedown', handleClickOutside)
       return () => document.removeEventListener('mousedown', handleClickOutside)
     }, [open, setOpen])
@@ -337,8 +369,8 @@ const TooltipContent = React.forwardRef<HTMLDivElement, TooltipContentProps>(
           side === 'top' && 'slide-in-from-bottom-2',
           className,
         )}
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         {...props}
       >
         {children}
