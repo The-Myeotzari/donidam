@@ -69,13 +69,16 @@ const Track = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTM
   ({ className, ...props }, ref) => {
     const { checked, onChange, id, disabled, ariaLabel } = useToggleContext()
 
+    const hasExternalAriaLabel = !!props['aria-label']
+    const isNoVisibleLabelMode = !!ariaLabel
+    const isVisibleLabelMode = !isNoVisibleLabelMode
     return (
       <button
         type="button"
         role="switch"
         aria-checked={checked}
-        aria-labelledby={!ariaLabel && !props['aria-label'] ? `${id}-label` : undefined}
-        aria-label={ariaLabel || props['aria-label']}
+        aria-labelledby={isVisibleLabelMode && !hasExternalAriaLabel ? `${id}-label` : undefined}
+        aria-label={props['aria-label'] || ariaLabel}
         id={id}
         ref={ref}
         disabled={disabled}
@@ -109,13 +112,12 @@ const Thumb = ({ className }: { className?: string }) => {
 Thumb.displayName = 'Toggle.Thumb'
 
 const Label = ({ children, className }: { children: React.ReactNode; className?: string }) => {
-  const { id, checked, disabled } = useToggleContext()
+  const { id, checked, disabled, onChange } = useToggleContext()
   return (
     <label
       id={`${id}-label`}
-      htmlFor={id}
-      onClick={(e) => {
-        if (disabled) e.preventDefault()
+      onClick={() => {
+        if (!disabled) onChange()
       }}
       className={cn(
         'text-sm font-medium select-none cursor-pointer transition-colors',
