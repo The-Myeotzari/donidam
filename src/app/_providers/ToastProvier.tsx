@@ -14,6 +14,7 @@ export interface ToastItem {
 }
 
 interface ToastContextProps {
+  toasts: ToastItem[]
   addToast: (toast: Omit<ToastItem, 'id'>) => void
   removeToast: (id: string) => void
 }
@@ -30,8 +31,17 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   const [toasts, setToasts] = useState<ToastItem[]>([])
 
   const addToast = useCallback((toast: Omit<ToastItem, 'id'>) => {
-    const id = Math.random().toString(36).substring(2, 9)
-    setToasts((prev) => [...prev, { ...toast, id }])
+    setToasts((prev) => {
+      const isDuplicate =
+        prev.length > 0 &&
+        prev[prev.length - 1].title === toast.title &&
+        prev[prev.length - 1].description === toast.description
+
+      if (isDuplicate) return prev
+
+      const id = crypto.randomUUID()
+      return [...prev, { ...toast, id }]
+    })
   }, [])
 
   const removeToast = useCallback((id: string) => {
@@ -39,9 +49,9 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   }, [])
 
   return (
-    <ToastContext value={{ addToast, removeToast }}>
+    <ToastContext value={{ toasts, addToast, removeToast }}>
       {children}
-      <ToastContainer toasts={toasts} />
+      <ToastContainer />
     </ToastContext>
   )
 }

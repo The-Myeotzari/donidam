@@ -16,8 +16,9 @@ const useMounted = () => {
 }
 
 // ToastContainer
-export const ToastContainer = ({ toasts }: { toasts: ToastItem[] }) => {
+export const ToastContainer = () => {
   const isMounted = useMounted()
+  const { toasts } = useToast()
   if (!isMounted) return null
 
   return createPortal(
