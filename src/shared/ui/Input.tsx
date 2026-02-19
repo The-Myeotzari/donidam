@@ -1,5 +1,6 @@
 import React from 'react'
-import cn from '../lib/cn'
+import cn from '@/shared/lib/cn'
+import { Eye, EyeClosed } from 'lucide-react'
 
 type InputVariant = 'default' | 'error'
 type InputSize = 'sm' | 'md' | 'lg'
@@ -8,6 +9,13 @@ interface InputcontextValue {
   id: string
   variant: InputVariant
   size: InputSize
+  messageId: string
+  hasMessage: boolean
+  setHasMessage: (v: boolean) => void
+
+  /** password toggle */
+  passwordVisible: boolean
+  setPasswordVisible: (v: boolean) => void
 }
 
 const InputContext = React.createContext<InputcontextValue | null>(null)
@@ -52,7 +60,6 @@ const inputStyles = {
 } as const
 
 /* Root */
-
 interface InputRootProps {
   children: React.ReactNode
   variant?: InputVariant
@@ -60,48 +67,59 @@ interface InputRootProps {
   className?: string
 }
 
-/**
- * children에서 <Input.Message>만 자동 분리해서
- * - control(relative) 안에는 Field/Icon/Toggle만
- * - message는 아래에 렌더
- */
+type DisplayNameCarrier = { displayName?: string }
 
 const isInputMessage = (node: React.ReactNode): node is React.ReactElement => {
   if (!React.isValidElement(node)) return false
 
   const type = node.type
+  if (typeof type === 'string') return false
 
-  return (
-    typeof type !== 'string' &&
-    'displayName' in type &&
-    type.displayName === 'InputMessage'
-  )
+  const maybe = type as unknown as DisplayNameCarrier
+  return maybe.displayName === 'InputMessage'
 }
 
-const InputRoot = ({ children, variant = 'default', size = 'md', className }: InputRootProps) => {
+const InputRoot = ({
+  children,
+  variant = 'default',
+  size = 'md',
+  className,
+}: InputRootProps) => {
   const id = React.useId()
+  const messageId = `${id}-message`
+  const [hasMessage, setHasMessage] = React.useState(false)
+
+  // ✅ password visible state (Context로 공유)
+  const [passwordVisible, setPasswordVisible] = React.useState(false)
 
   const childArray = React.Children.toArray(children)
 
   const messages: React.ReactNode[] = []
   const controlChildren: React.ReactNode[] = []
 
- childArray.forEach((child) => {
-  if (isInputMessage(child)) {
-    messages.push(child)
-  } else {
-    controlChildren.push(child)
-  }
-})
-
+  childArray.forEach((child) => {
+    if (isInputMessage(child)) messages.push(child)
+    else controlChildren.push(child)
+  })
 
   return (
-    <InputContext.Provider value={{ id, variant, size }}>
+    <InputContext
+      value={{
+        id,
+        variant,
+        size,
+        messageId,
+        hasMessage,
+        setHasMessage,
+        passwordVisible,
+        setPasswordVisible,
+      }}
+    >
       <div className={cn(inputStyles.root, className)}>
         <div className={inputStyles.control}>{controlChildren}</div>
-        {messages.length > 0 ? <div>{messages}</div> : null}
+        {hasMessage ? <div>{messages}</div> : null}
       </div>
-    </InputContext.Provider>
+    </InputContext>
   )
 }
 
@@ -109,14 +127,25 @@ const InputRoot = ({ children, variant = 'default', size = 'md', className }: In
 type InputFieldProps = React.ComponentProps<'input'>
 
 const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
-  ({ className, type = 'text', ...props }, ref) => {
-    const { id, variant, size } = useInputContext()
+  ({ className, type = 'text', 'aria-describedby': ariaDescribedBy, ...props }, ref) => {
+    const { id, variant, size, messageId, hasMessage, passwordVisible } = useInputContext()
+
+    const describedBy = hasMessage
+      ? ariaDescribedBy
+        ? `${ariaDescribedBy} ${messageId}`
+        : messageId
+      : ariaDescribedBy
+
+    // type=password 인 경우에만 토글 반영
+    const resolvedType = type === 'password' ? (passwordVisible ? 'text' : 'password') : type
 
     return (
       <input
         id={id}
         ref={ref}
-        type={type}
+        type={resolvedType}
+        aria-invalid={variant === 'error' ? true : undefined}
+        aria-describedby={describedBy}
         className={cn(
           inputStyles.field.base,
           inputStyles.field.variants[variant],
@@ -141,21 +170,22 @@ const InputIcon = ({ children, className }: InputIconProps) => {
 }
 InputIcon.displayName = 'InputIcon'
 
-/* Password Toggle */
+/* Password Toggle (Context 기반) */
 const InputPasswordToggle = () => {
-  const [visible, setVisible] = React.useState(false)
+  const { passwordVisible, setPasswordVisible } = useInputContext()
 
   return (
     <button
       type="button"
-      onClick={() => setVisible((p) => !p)}
+      onClick={() => setPasswordVisible(!passwordVisible)}
       className={cn(
         inputStyles.right.base,
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
       )}
-      aria-label={visible ? '비밀번호 숨기기' : '비밀번호 보기'}
+      aria-label={passwordVisible ? '비밀번호 숨기기' : '비밀번호 보기'}
+      aria-pressed={passwordVisible}
     >
-      👁
+      {passwordVisible ? <Eye /> : <EyeClosed/>}
     </button>
   )
 }
@@ -168,10 +198,20 @@ interface InputMessageProps {
 }
 
 const InputMessage = ({ children, className }: InputMessageProps) => {
-  const { variant } = useInputContext()
+  const { variant, messageId, setHasMessage } = useInputContext()
+
+  React.useEffect(() => {
+    setHasMessage(true)
+    return () => setHasMessage(false)
+  }, [setHasMessage])
 
   return (
-    <p className={cn(inputStyles.message.base, inputStyles.message.variants[variant], className)}>
+    <p
+      id={messageId}
+      role={variant === 'error' ? 'alert' : undefined}
+      aria-live={variant === 'error' ? 'polite' : undefined}
+      className={cn(inputStyles.message.base, inputStyles.message.variants[variant], className)}
+    >
       {children}
     </p>
   )
