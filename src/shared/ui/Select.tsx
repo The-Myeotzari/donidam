@@ -389,7 +389,7 @@ const SelectValue = ({ className, placeholder: placeholderProp, ...props }: Sele
 SelectValue.displayName = 'SelectValue'
 
 /** Content */
-interface SelectContentProps extends React.HTMLAttributes<HTMLDivElement> {}
+type SelectContentProps = React.HTMLAttributes<HTMLDivElement>
 
 const SelectContent = ({ className, children, ...props }: SelectContentProps) => {
   const { open, setOpen, disabled, listboxId, triggerRef, contentRef, items, activeIndex, setActiveIndex, closeAndFocusTrigger, side, align, offset, contentWidth, setValue } =
