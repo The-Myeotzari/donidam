@@ -10,6 +10,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
+import { createPortal } from 'react-dom'
 
 interface TooltipContextProps {
   open: boolean
@@ -20,6 +21,7 @@ interface TooltipContextProps {
   tooltipId: string
   openTimerRef: React.RefObject<ReturnType<typeof setTimeout> | null>
   closeTimerRef: React.RefObject<ReturnType<typeof setTimeout> | null>
+  triggerRef: React.RefObject<HTMLElement | null>
 }
 
 const TooltipContext = createContext<TooltipContextProps | null>(null)
@@ -81,6 +83,7 @@ export const Tooltip = ({
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen)
   const tooltipId = useId()
   const { openTimerRef, closeTimerRef } = useSharedTimers()
+  const triggerRef = useRef<HTMLElement | null>(null)
 
   const open = controlledOpen !== undefined ? controlledOpen : uncontrolledOpen
 
@@ -101,11 +104,11 @@ export const Tooltip = ({
     tooltipId,
     openTimerRef,
     closeTimerRef,
+    triggerRef,
   }
 
   return <TooltipContext value={contextValue}>{children}</TooltipContext>
 }
-
 
 interface TooltipTriggerProps extends React.HTMLAttributes<HTMLButtonElement> {
   asChild?: boolean
@@ -132,6 +135,7 @@ const TooltipTrigger = ({
     tooltipId,
     openTimerRef,
     closeTimerRef,
+    triggerRef,
   } = useTooltipContext()
 
   const scheduleOpen = () => {
@@ -174,6 +178,15 @@ const TooltipTrigger = ({
     onBlur?.(e)
   }
 
+  const setRefs = (node: HTMLButtonElement | null) => {
+    triggerRef.current = node
+    if (typeof ref === 'function') {
+      ref(node)
+    } else if (ref) {
+      ;(ref as React.MutableRefObject<HTMLButtonElement | null>).current = node
+    }
+  }
+
   const commonProps = {
     onMouseEnter: handleMouseEnter,
     onMouseLeave: handleMouseLeave,
@@ -193,20 +206,20 @@ const TooltipTrigger = ({
       ...childProps,
       ...restProps,
       ...commonProps,
+      ref: setRefs,
     }
 
     return <child.type {...mergedProps} />
   }
 
   return (
-    <button ref={ref} type="button" disabled={disabled} {...commonProps} {...props}>
+    <button ref={setRefs} type="button" disabled={disabled} {...commonProps} {...props}>
       {children}
     </button>
   )
 }
 
 TooltipTrigger.displayName = 'TooltipTrigger'
-
 
 type Side = 'top' | 'right' | 'bottom' | 'left'
 type Align = 'start' | 'center' | 'end'
@@ -237,16 +250,12 @@ const TooltipContent = ({
   ref,
   ...props
 }: TooltipContentProps) => {
-  const { open, setOpen, tooltipId, closeDelayDuration, openTimerRef, closeTimerRef } =
+  const { open, setOpen, tooltipId, closeDelayDuration, openTimerRef, closeTimerRef, triggerRef } =
     useTooltipContext()
 
   const internalRef = useRef<HTMLDivElement>(null)
-  const resolvedRef = useRef<HTMLDivElement | null>(null)
-
-  const [position, setPosition] = useState<Position>({ top: 0, left: 0 })
 
   const setRefs = (node: HTMLDivElement | null) => {
-    resolvedRef.current = node
     internalRef.current = node
     if (typeof ref === 'function') {
       ref(node)
@@ -274,14 +283,13 @@ const TooltipContent = ({
     onMouseLeave?.(e)
   }
 
+  const [position, setPosition] = useState<Position>({ top: 0, left: 0 })
+
   useLayoutEffect(() => {
-    if (!open || !resolvedRef.current) return
+    if (!open || !internalRef.current || !triggerRef.current) return
 
-    const trigger = resolvedRef.current.previousElementSibling as HTMLElement | null
-    if (!trigger) return
-
-    const triggerRect = trigger.getBoundingClientRect()
-    const contentRect = resolvedRef.current.getBoundingClientRect()
+    const triggerRect = triggerRef.current.getBoundingClientRect()
+    const contentRect = internalRef.current.getBoundingClientRect()
 
     let top = 0
     let left = 0
@@ -335,7 +343,7 @@ const TooltipContent = ({
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setPosition({ top, left })
-  }, [open, side, sideOffset, align, alignOffset])
+  }, [open, side, sideOffset, align, alignOffset, triggerRef])
 
   useEffect(() => {
     if (!open) return
@@ -350,20 +358,22 @@ const TooltipContent = ({
     if (!open) return
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as Node
-      if (resolvedRef.current && !resolvedRef.current.contains(target)) {
-        const trigger = resolvedRef.current.previousElementSibling
-        if (trigger && !trigger.contains(target)) {
-          setOpen(false)
-        }
+      if (
+        internalRef.current &&
+        !internalRef.current.contains(target) &&
+        triggerRef.current &&
+        !triggerRef.current.contains(target)
+      ) {
+        setOpen(false)
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [open, setOpen])
+  }, [open, setOpen, triggerRef])
 
   if (!open) return null
 
-  return (
+  return createPortal(
     <div
       ref={setRefs}
       id={tooltipId}
@@ -378,7 +388,6 @@ const TooltipContent = ({
       className={cn(
         'overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md',
         'animate-in fade-in-0 zoom-in-95',
-        'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
         side === 'bottom' && 'slide-in-from-top-2',
         side === 'left' && 'slide-in-from-right-2',
         side === 'right' && 'slide-in-from-left-2',
@@ -390,7 +399,8 @@ const TooltipContent = ({
       {...props}
     >
       {children}
-    </div>
+    </div>,
+    document.body,
   )
 }
 
