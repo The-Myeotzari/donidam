@@ -40,7 +40,8 @@ export interface AccordionProps {
   type?: 'single' | 'multiple'
   defaultValue?: string | string[]
   value?: string | string[]
-  onValueChange?: (value: string | string[]) => void
+  // [피드백 3] single 타입에서 빈 문자열 대신 undefined로 "선택 없음"을 명확히 표현
+  onValueChange?: (value: string | undefined | string[]) => void
   disabled?: boolean
   children: React.ReactNode
   className?: string
@@ -60,7 +61,6 @@ export const Accordion = React.forwardRef<HTMLDivElement, AccordionProps>(
     },
     ref,
   ) => {
-    // Uncontrolled state
     const [uncontrolledValue, setUncontrolledValue] = React.useState<Set<string>>(() => {
       if (defaultValue) {
         return new Set(Array.isArray(defaultValue) ? defaultValue : [defaultValue])
@@ -76,36 +76,60 @@ export const Accordion = React.forwardRef<HTMLDivElement, AccordionProps>(
       return uncontrolledValue
     }, [isControlled, controlledValue, uncontrolledValue])
 
+    // [피드백 2] toggleItem이 openItems에 직접 의존하지 않도록
+    // uncontrolled는 setState(prev => ...) 패턴으로, controlled는 현재 ref로 최신값 참조
+    const openItemsRef = React.useRef(openItems)
+    React.useLayoutEffect(() => {
+      openItemsRef.current = openItems
+    })
+
     const toggleItem = React.useCallback(
       (value: string) => {
-        const newOpenItems = new Set(openItems)
-
-        if (type === 'single') {
-          if (newOpenItems.has(value)) {
-            newOpenItems.clear()
+        const compute = (prev: Set<string>): Set<string> => {
+          const next = new Set(prev)
+          if (type === 'single') {
+            if (next.has(value)) {
+              next.clear()
+            } else {
+              next.clear()
+              next.add(value)
+            }
           } else {
-            newOpenItems.clear()
-            newOpenItems.add(value)
+            if (next.has(value)) {
+              next.delete(value)
+            } else {
+              next.add(value)
+            }
           }
-        } else {
-          if (newOpenItems.has(value)) {
-            newOpenItems.delete(value)
-          } else {
-            newOpenItems.add(value)
-          }
+          return next
         }
 
         if (!isControlled) {
-          setUncontrolledValue(newOpenItems)
-        }
+          setUncontrolledValue((prev) => {
+            const next = compute(prev)
 
-        if (onValueChange) {
-          const newValue =
-            type === 'single' ? Array.from(newOpenItems)[0] || '' : Array.from(newOpenItems)
-          onValueChange(newValue)
+            if (onValueChange) {
+              // [피드백 3] single 타입에서 선택 없음은 undefined로 반환
+              const newValue =
+                type === 'single' ? Array.from(next)[0] ?? undefined : Array.from(next)
+              onValueChange(newValue)
+            }
+
+            return next
+          })
+        } else {
+          const next = compute(openItemsRef.current)
+
+          if (onValueChange) {
+            // [피드백 3] single 타입에서 선택 없음은 undefined로 반환
+            const newValue =
+              type === 'single' ? Array.from(next)[0] ?? undefined : Array.from(next)
+            onValueChange(newValue)
+          }
         }
       },
-      [openItems, type, isControlled, onValueChange],
+      // openItems 의존성 제거 — ref로 최신값을 참조하므로 type/isControlled/onValueChange만 필요
+      [type, isControlled, onValueChange],
     )
 
     const contextValue = React.useMemo(
@@ -249,7 +273,7 @@ export const AccordionTrigger = React.forwardRef<HTMLButtonElement, AccordionTri
           ref={ref}
           id={triggerId}
           type="button"
-          data-accordion-trigger="" 
+          data-accordion-trigger=""
           className={cn(
             'flex flex-1 items-center justify-between py-4 font-medium transition-all',
             'text-foreground hover:text-primary hover:underline',
@@ -293,12 +317,15 @@ export const AccordionContent = React.forwardRef<HTMLDivElement, AccordionConten
     const contentRef = React.useRef<HTMLDivElement>(null)
     const [height, setHeight] = React.useState<number | undefined>(isOpen ? undefined : 0)
 
+    const [isHidden, setIsHidden] = React.useState(!isOpen)
+
     React.useImperativeHandle(ref, () => contentRef.current!)
 
     React.useEffect(() => {
       if (!contentRef.current) return
 
       if (isOpen) {
+        setIsHidden(false)
         const contentHeight = contentRef.current.scrollHeight
         setHeight(contentHeight)
 
@@ -314,6 +341,12 @@ export const AccordionContent = React.forwardRef<HTMLDivElement, AccordionConten
         requestAnimationFrame(() => {
           setHeight(0)
         })
+
+        const hideTimer = setTimeout(() => {
+          setIsHidden(true)
+        }, 200)
+
+        return () => clearTimeout(hideTimer)
       }
     }, [isOpen])
 
@@ -323,7 +356,7 @@ export const AccordionContent = React.forwardRef<HTMLDivElement, AccordionConten
         id={contentId}
         role="region"
         aria-labelledby={triggerId}
-        hidden={!isOpen}
+        hidden={isHidden}
         className={cn(
           'overflow-hidden text-sm text-muted-foreground transition-all duration-200 ease-in-out',
           className,
