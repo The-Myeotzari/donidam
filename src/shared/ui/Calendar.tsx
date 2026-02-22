@@ -1,7 +1,7 @@
 'use client'
 
 import cn from '@/shared/lib/cn'
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState, useMemo } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 const getDaysInMonth = (date: Date): number => {
@@ -207,15 +207,18 @@ interface CalendarGridProps {
 }
 
 const CalendarGrid = ({ className }: CalendarGridProps) => {
-  const { currentMonth, selectedDate, onDateSelect, isDateDisabled } = useCalendarContext()
+  const { currentMonth, setCurrentMonth, selectedDate, onDateSelect, isDateDisabled } =
+    useCalendarContext()
 
-  const days = generateCalendarDays(currentMonth)
+  const days = useMemo(() => generateCalendarDays(currentMonth), [currentMonth])
 
   const handleDayClick = (date: Date) => {
     if (isDateDisabled && isDateDisabled(date)) return
+    if (date.getMonth() !== currentMonth.getMonth()) {
+      setCurrentMonth(new Date(date.getFullYear(), date.getMonth(), 1))
+    }
     onDateSelect(date)
   }
-
   const isCurrentMonth = (date: Date) => date.getMonth() === currentMonth.getMonth()
 
   return (
