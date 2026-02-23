@@ -1,5 +1,6 @@
+import QueryProvider from '@/app/_providers/QueryProvider'
+import { ToastProvider } from '@/app/_providers/ToastProvier'
 import type { Metadata, Viewport } from 'next'
-import QueryProvider from '@/lib/react-query/QueryProvider'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -20,15 +21,13 @@ export const viewport: Viewport = {
   themeColor: '#0b0f17',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
       <body>
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </QueryProvider>
       </body>
     </html>
   )
