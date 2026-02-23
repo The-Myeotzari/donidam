@@ -4,7 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from '@/shared/lib/ui/Accordion'
+} from '@/shared/ui/Accordion'
 
 const meta: Meta<typeof Accordion> = {
   title: 'ui-kit/Accordion',
