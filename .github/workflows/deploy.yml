@@ -44,34 +44,34 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no \
           ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
-
+          
             set -e
-
-            echo "📦 Move to project directory"
+          
             cd /home/ubuntu/donidam
-
+          
             echo "📥 Pull latest code"
             git pull origin main
-
+          
+            echo "🧹 Clean old dependencies"
+            rm -rf node_modules
+            rm -rf .next
+          
             echo "📦 Install dependencies"
             npm ci
-
+          
             echo "🏗 Build project"
             npm run build
-
+          
             echo "🚀 Start or Restart PM2"
-
+          
             if pm2 describe app > /dev/null; then
-              echo "♻ Restarting existing app"
               pm2 restart app
             else
-              echo "🆕 Starting new app"
               pm2 start npm --name "app" -- start
             fi
-
-            echo "💾 Save PM2 process list"
+          
             pm2 save
-
+          
             echo "✅ Deploy completed"
-
+          
           EOF
