@@ -10,17 +10,14 @@ export default function Home() {
     queryFn: async () => 'react-query-ok',
   })
 
-  const signOut = async() => {
+  const signOut = async () => {
     const supabase = createClient()
     await supabase.auth.signOut()
 
-const { data } = await supabase.auth.getSession()
-console.log(data.session) // null이면 로그아웃 OK
-    location.href='/auth'
+    const { data } = await supabase.auth.getSession()
+    console.log(data.session) // null이면 로그아웃 OK
+    location.href = '/auth'
   }
 
-  
-  return (
-    <Button onClick={signOut}>로그아웃</Button>
-  )
+  return <Button onClick={signOut}>로그아웃</Button>
 }
