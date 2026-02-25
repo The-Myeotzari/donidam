@@ -31,5 +31,9 @@ export async function createServer() {
 // 도메인 주소 추가 필요
 export async function getOrigin(): Promise<string> {
   const h = await headers()
-  return h.get('origin') ?? process.env.NEXT_PUBLIC_BASE_URL ?? ''
+  const proto = h.get('x-forwarded-proto') ?? 'http'
+  const host = h.get('x-forwarded-host') ?? h.get('host')
+
+  if (host) return `${proto}://${host}`
+  return process.env.NEXT_PUBLIC_BASE_URL ?? ''
 }
