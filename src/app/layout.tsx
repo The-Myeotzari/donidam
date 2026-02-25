@@ -1,5 +1,6 @@
 import QueryProvider from '@/app/_providers/QueryProvider'
 import { ToastProvider } from '@/app/_providers/ToastProvier'
+import { Header } from '@/shared/layout/header/Header'
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
@@ -26,7 +27,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ko">
       <body>
         <QueryProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <ToastProvider>
+            <div className="max-w-md mx-auto bg-background">
+              <Header />
+              <main className="px-4 pb-4">{children}</main>
+            </div>
+          </ToastProvider>
         </QueryProvider>
       </body>
     </html>
