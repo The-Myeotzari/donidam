@@ -1,5 +1,7 @@
 'use client'
 
+import { createClient } from '@/shared/lib/supabase/client'
+import { Button } from '@/shared/ui/Button'
 import { useQuery } from '@tanstack/react-query'
 
 export default function Home() {
@@ -8,5 +10,17 @@ export default function Home() {
     queryFn: async () => 'react-query-ok',
   })
 
-  return <div className='gradient-family bg-background text-muted-foreground'>{data}</div>
+  const signOut = async() => {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+
+const { data } = await supabase.auth.getSession()
+console.log(data.session) // null이면 로그아웃 OK
+    location.href='/auth'
+  }
+
+  
+  return (
+    <Button onClick={signOut}>로그아웃</Button>
+  )
 }
