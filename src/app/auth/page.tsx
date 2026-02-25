@@ -1,7 +1,6 @@
 'use client'
 import { createClient } from '@/shared/lib/supabase/client'
 import { Button } from '@/shared/ui/Button'
-import { useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
 
 export default function Auth() {
