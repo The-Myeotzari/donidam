@@ -1,6 +1,6 @@
+import type { Database } from '@/shared/types/database.types'
 import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
-import type { Database } from '@/types/database.types'
+import { cookies, headers } from 'next/headers'
 
 export async function createClient() {
   const cookieStore = await cookies()
@@ -24,6 +24,12 @@ export async function createClient() {
           }
         },
       },
-    }
+    },
   )
+}
+
+// 도메인 주소 추가 필요
+export async function getOrigin(): Promise<string> {
+  const h = await headers()
+  return h.get('origin') ?? process.env.NEXT_PUBLIC_BASE_URL ?? ''
 }
