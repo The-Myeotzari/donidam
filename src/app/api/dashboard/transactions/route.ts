@@ -15,6 +15,7 @@ const CreateTransactionBodySchema = z.object({
   // TODO: "내용" 컬럼 테이블 반영 후 추가 예정
 })
 
+// 지출 추가/수입 추가 API
 export async function POST(request: Request) {
   const auth = await getUser(request)
   if ('response' in auth) return auth.response

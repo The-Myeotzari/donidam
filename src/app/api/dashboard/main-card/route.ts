@@ -12,6 +12,7 @@ import { NextResponse } from 'next/server'
 
 type MainCardCode = (typeof MAIN_CARD_CODES)[number]
 
+// 메인 카드 조회
 export async function GET(request: Request) {
   const auth = await getUser(request)
   if ('response' in auth) return auth.response

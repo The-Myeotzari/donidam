@@ -2,6 +2,7 @@ import { apiError } from '@/shared/lib/api/apiError'
 import { getUser } from '@/shared/lib/api/getUser'
 import { NextResponse } from 'next/server'
 
+// 월별 예산 목표 조회
 export async function GET(request: Request) {
   const auth = await getUser(request)
   if ('response' in auth) return auth.response
@@ -31,6 +32,7 @@ export async function GET(request: Request) {
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
 
+// 월별 예산 목표 수정
 export async function PUT(request: Request) {
   const auth = await getUser(request)
   if ('response' in auth) return auth.response
