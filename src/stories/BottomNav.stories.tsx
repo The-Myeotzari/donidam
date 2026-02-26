@@ -31,26 +31,3 @@ export const Home: Story = {
   },
 }
 
-export const AutoFill: Story = {
-  parameters: {
-    nextjs: { navigation: { pathname: '/auto-fill' } },
-  },
-}
-
-export const Calendar: Story = {
-  parameters: {
-    nextjs: { navigation: { pathname: '/calendar' } },
-  },
-}
-
-export const Stats: Story = {
-  parameters: {
-    nextjs: { navigation: { pathname: '/stats' } },
-  },
-}
-
-export const More: Story = {
-  parameters: {
-    nextjs: { navigation: { pathname: '/more' } },
-  },
-}
