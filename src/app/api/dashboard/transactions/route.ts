@@ -62,8 +62,9 @@ export async function POST(request: Request) {
     return apiError(request, 'INTERNAL_SERVER_ERROR', 500, error.message)
   }
 
-  return NextResponse.json(
-    {
+  return NextResponse.json({
+    ok: true,
+    data: {
       id: data.id,
       type: data.type,
       category: data.category,
@@ -72,6 +73,5 @@ export async function POST(request: Request) {
       createdAt: data.created_at,
       end_date: data.end_date,
     },
-    { status: 201 },
-  )
+  })
 }
