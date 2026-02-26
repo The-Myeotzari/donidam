@@ -67,7 +67,6 @@ export async function GET(request: Request) {
   }
 
   const totalExpense = Math.floor(Number(transactions?.[0]?.totalExpense ?? 0))
-  console.log(totalExpense)
 
   // 지표 계산
   const { spendPercent, remainingAmount, dailyRecommendedAmount } = calcBudgetVars({
