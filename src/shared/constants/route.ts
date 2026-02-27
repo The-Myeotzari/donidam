@@ -1,9 +1,9 @@
 export const ROUTES = {
   auth: '/auth',
 
-  dashboard: '/dashboard',
-  dashboardMonthly: '/dashboard/monthly-expenses',
-  dashboardTransactions: '/dashboard/transactions',
+  dashboard: '/',
+  dashboardMonthly: '/monthly-expenses',
+  dashboardTransactions: '/transactions',
 
   autoFill: '/auto-fill',
   autoFillAccountDetail: '/auto-fill/accounts/:accountsId',
