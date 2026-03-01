@@ -132,3 +132,24 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     },
   })
 }
+
+export async function DELETE(request: Request, { params }: RouteParams) {
+  const auth = await getUser(request)
+  if ('response' in auth) return auth.response
+
+  const { supabase, user } = auth
+
+  const id = Number(params.id)
+
+  if (!id || isNaN(id)) {
+    return apiError(request, 'INVALID_REQUEST', 400, 'Invalid transaction id')
+  }
+
+  const { error } = await supabase.from('transactions').delete().eq('id', id).eq('user_id', user.id)
+
+  if (error) {
+    return apiError(request, 'INTERNAL_SERVER_ERROR', 500, error.message)
+  }
+
+  return new NextResponse(null, { status: 204 })
+}
