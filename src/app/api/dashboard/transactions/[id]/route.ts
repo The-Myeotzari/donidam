@@ -4,19 +4,17 @@ import { getUser } from '@/shared/lib/api/getUser'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
-interface RouteParams {
-  params: {
-    id: string
-  }
-}
+type Params = { id: string }
+type RouteContext = { params: Promise<Params> }
 
-export async function GET(request: Request, { params }: RouteParams) {
+export async function GET(request: Request, context: RouteContext) {
   const auth = await getUser(request)
   if ('response' in auth) return auth.response
 
   const { supabase, user } = auth
 
-  const id = Number(params.id)
+  const { id: idParam } = await context.params
+  const id = Number(idParam)
 
   if (!id || isNaN(id)) {
     return apiError(request, 'INVALID_REQUEST', 400, `Invalid transaction id`)
@@ -65,13 +63,14 @@ const UpdateTransactionBodySchema = z
     },
   )
 
-export async function PATCH(request: Request, { params }: RouteParams) {
+export async function PATCH(request: Request, context: RouteContext) {
   const auth = await getUser(request)
   if ('response' in auth) return auth.response
 
   const { supabase, user } = auth
 
-  const id = Number(params.id)
+  const { id: idParam } = await context.params
+  const id = Number(idParam)
 
   if (!id || isNaN(id)) {
     return apiError(request, 'INVALID_REQUEST', 400, 'Invalid transaction id')
@@ -133,13 +132,14 @@ export async function PATCH(request: Request, { params }: RouteParams) {
   })
 }
 
-export async function DELETE(request: Request, { params }: RouteParams) {
+export async function DELETE(request: Request, context: RouteContext) {
   const auth = await getUser(request)
   if ('response' in auth) return auth.response
 
   const { supabase, user } = auth
 
-  const id = Number(params.id)
+  const { id: idParam } = await context.params
+  const id = Number(idParam)
 
   if (!id || isNaN(id)) {
     return apiError(request, 'INVALID_REQUEST', 400, 'Invalid transaction id')
