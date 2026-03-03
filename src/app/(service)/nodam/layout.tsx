@@ -6,7 +6,7 @@ import { Header } from '@/shared/layout/header/Header'
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <Header />
+      <Header back={true} title={"노담 시작하기"} subtitle={"담배 끊고, 돈도 모으고!"} />
       <main className="px-4 pb-4">{children}</main>
       <BottomNav />
     </>
