@@ -1,3 +1,4 @@
+import { BottomNav } from '@/shared/layout/BottomNav'
 import { Header } from '@/shared/layout/header/Header'
 
 // 동적 라우트 커스텀 타이틀 작업으로 인해 폴더 별로 레이아웃을 분리했습니다.
@@ -8,6 +9,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       {/* 메인 메이지 작업 시 수정 필요 */}
       <Header title="돈이담" />
       <main className="px-4 pb-4">{children}</main>
+      <BottomNav />
     </>
   )
 }
