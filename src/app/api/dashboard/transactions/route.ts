@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     amount: body.amount,
     is_fixed: body.isFixed,
     created_at: body.createdAt,
-    endDate: body.endDate ?? null,
+    end_date: body.endDate ?? null,
     // TODO: "거래 계좌내용" 테이블 반영 후 account 관련 컬럼 추가 예정
     // TODO: "내용" 컬럼 테이블 반영 후 추가 예정
   }
