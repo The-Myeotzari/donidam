@@ -1,24 +1,17 @@
+import { toISODateTime } from '@/features/add-expense/lib/toISODateTime'
+import type { CreateExpensePayload, FormState } from '@/features/add-expense/model/addExpense.type'
 import {
   TRANSACTION_CATEGORIES,
   TRANSACTION_CATEGORY_ICON,
   TRANSACTION_CATEGORY_LABEL,
   TRANSACTION_CATEGORY_THEME,
-  type TransactionCategory,
 } from '@/shared/constants/transactionCategory'
 import cn from '@/shared/lib/cn'
 import { Input } from '@/shared/ui/Input'
 import { Toggle } from '@/shared/ui/Toggle'
 import { useState } from 'react'
 
-// 폼 상태
-type FormState = {
-  amount: string
-  category: TransactionCategory | null
-  description: string
-  isFixed: boolean
-  date: string
-  endDate: string
-}
+export const ADD_EXPENSE_FORM_ID = 'add-expense-form'
 
 const initialForm = (): FormState => ({
   amount: '',
@@ -29,8 +22,13 @@ const initialForm = (): FormState => ({
   endDate: '',
 })
 
-// 폼
-export function AddExpenseForm() {
+// Props
+interface AddExpenseFormProps {
+  onSubmitData: (payload: CreateExpensePayload) => void
+}
+
+// 폼 컴포넌트
+export function AddExpenseForm({ onSubmitData }: AddExpenseFormProps) {
   const [form, setForm] = useState<FormState>(initialForm)
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
@@ -38,11 +36,27 @@ export function AddExpenseForm() {
 
   const displayAmount = form.amount ? Number(form.amount).toLocaleString('ko-KR') : ''
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!form.category || !form.amount) return
+
+    onSubmitData({
+      type: 'OUT',
+      category: form.category,
+      amount: Number(form.amount),
+      isFixed: form.isFixed,
+      createdAt: toISODateTime(form.date),
+      endDate: form.isFixed && form.endDate ? toISODateTime(form.endDate) : undefined,
+    })
+  }
+
   return (
-    <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+    <form id={ADD_EXPENSE_FORM_ID} onSubmit={handleSubmit} className="space-y-5">
       {/* 금액 */}
       <div className="space-y-1.5">
-        <label className="text-sm font-medium">금액</label>
+        <label className="text-sm font-medium">
+          금액 <span className="text-destructive">*</span>
+        </label>
         <Input size="lg">
           <Input.Field
             type="text"
@@ -59,7 +73,9 @@ export function AddExpenseForm() {
 
       {/* 카테고리 */}
       <div className="space-y-2">
-        <label className="text-sm font-medium">카테고리</label>
+        <label className="text-sm font-medium">
+          카테고리 <span className="text-destructive">*</span>
+        </label>
         <div className="grid grid-cols-4 gap-2">
           {TRANSACTION_CATEGORIES.map((cat) => {
             const Icon = TRANSACTION_CATEGORY_ICON[cat]
@@ -109,7 +125,7 @@ export function AddExpenseForm() {
       </div>
 
       {/* 고정지출 */}
-      <div className="flex items-center justify-between ">
+      <div className="flex items-center justify-between">
         <span className="text-sm font-medium">고정지출 인가요?</span>
         <Toggle
           checked={form.isFixed}
