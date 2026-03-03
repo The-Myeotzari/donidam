@@ -1,6 +1,6 @@
 'use client'
 
-import { AddIncomeForm } from '@/features/add-income/ui/AddIncomeForm'
+import { AddIncomeForm } from '@/features/add-transaction/ui/AddIncomeForm'
 import { Button } from '@/shared/ui/Button'
 import { Modal } from '@/shared/ui/Modal'
 import { TrendingUp } from 'lucide-react'

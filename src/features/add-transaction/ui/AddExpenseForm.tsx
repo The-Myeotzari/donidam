@@ -1,5 +1,8 @@
-import { toISODateTime } from '@/features/add-expense/lib/toISODateTime'
-import type { CreateExpensePayload, FormState } from '@/features/add-expense/model/addExpense.type'
+import { toISODateTime } from '@/features/add-transaction/lib/toISODateTime'
+import type {
+  CreateExpensePayload,
+  FormState,
+} from '@/features/add-transaction/model/addTransaction.type'
 import {
   TRANSACTION_CATEGORIES,
   TRANSACTION_CATEGORY_ICON,

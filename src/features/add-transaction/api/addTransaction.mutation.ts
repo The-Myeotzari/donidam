@@ -1,5 +1,5 @@
-import { CreateExpenseResponseSchema } from '@/features/add-expense/model/addExpense.schema'
-import { CreateExpensePayload } from '@/features/add-expense/model/addExpense.type'
+import { CreateExpenseResponseSchema } from '@/features/add-transaction/model/addTransaction.schema'
+import { CreateExpensePayload } from '@/features/add-transaction/model/addTransaction.type'
 import { QUERY_KEYS } from '@/shared/constants/queryKey'
 import { Api } from '@/shared/lib/api/api'
 import { useMutation, useQueryClient } from '@tanstack/react-query'

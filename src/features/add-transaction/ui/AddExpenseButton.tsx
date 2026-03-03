@@ -1,7 +1,7 @@
 'use client'
 
-import { useAddExpenseMutation } from '@/features/add-expense/api/addExpense.mutation'
-import { ADD_EXPENSE_FORM_ID, AddExpenseForm } from '@/features/add-expense/ui/AddExpenseForm'
+import { useAddExpenseMutation } from '@/features/add-transaction/api/addTransaction.mutation'
+import { ADD_EXPENSE_FORM_ID, AddExpenseForm } from '@/features/add-transaction/ui/AddExpenseForm'
 import { isApiRequestError } from '@/shared/lib/api/api'
 import { Button } from '@/shared/ui/Button'
 import { Modal } from '@/shared/ui/Modal'
