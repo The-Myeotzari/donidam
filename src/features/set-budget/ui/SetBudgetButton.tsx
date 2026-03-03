@@ -1,7 +1,8 @@
 'use client'
 
-import { Modal } from '@/shared/ui/Modal'
+import { SetBudgetForm } from '@/features/set-budget/ui/SetBudgetForm'
 import { Button } from '@/shared/ui/Button'
+import { Modal } from '@/shared/ui/Modal'
 import { Target } from 'lucide-react'
 import { useState } from 'react'
 
@@ -21,9 +22,7 @@ export function SetBudgetButton() {
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <Modal.Header>이번달 예산 설정</Modal.Header>
         <Modal.Content>
-          <div className="py-4 text-sm text-muted-foreground">
-            {/* TODO: 예산 설정 폼 */}
-          </div>
+          <SetBudgetForm />
         </Modal.Content>
       </Modal>
     </>
