@@ -1,7 +1,8 @@
 'use client'
 
-import { Modal } from '@/shared/ui/Modal'
+import { AddIncomeForm } from '@/features/add-income/ui/AddIncomeForm'
 import { Button } from '@/shared/ui/Button'
+import { Modal } from '@/shared/ui/Modal'
 import { TrendingUp } from 'lucide-react'
 import { useState } from 'react'
 
@@ -20,11 +21,15 @@ export function AddIncomeButton() {
 
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <Modal.Header>수입 추가</Modal.Header>
-        <Modal.Content>
-          <div className="py-4 text-sm text-muted-foreground">
-            {/* TODO: 수입 추가 폼 */}
-          </div>
+        <Modal.Content className="max-h-[65vh] overflow-y-auto">
+          <AddIncomeForm />
         </Modal.Content>
+        <Modal.Footer>
+          <Button variant="outline" size="md" onClick={() => setIsOpen(false)}>
+            취소
+          </Button>
+          <Button size="md">추가하기</Button>
+        </Modal.Footer>
       </Modal>
     </>
   )
