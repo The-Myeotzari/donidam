@@ -1,10 +1,12 @@
 'use client'
 
-import { Modal } from '@/shared/ui/Modal'
+import { AddExpenseForm } from '@/features/add-expense/ui/AddExpenseForm'
 import { Button } from '@/shared/ui/Button'
+import { Modal } from '@/shared/ui/Modal'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 
+// 버튼
 export function AddExpenseButton() {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -20,11 +22,15 @@ export function AddExpenseButton() {
 
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <Modal.Header>지출 추가</Modal.Header>
-        <Modal.Content>
-          <div className="py-4 text-sm text-muted-foreground">
-            {/* TODO: 지출 추가 폼 */}
-          </div>
+        <Modal.Content className="max-h-[65vh] overflow-y-auto">
+          <AddExpenseForm />
         </Modal.Content>
+        <Modal.Footer>
+          <Button variant="outline" size="md" onClick={() => setIsOpen(false)}>
+            취소
+          </Button>
+          <Button size="md">추가하기</Button>
+        </Modal.Footer>
       </Modal>
     </>
   )
