@@ -1,4 +1,4 @@
-import { EXPENSE_CATEGORIES } from '@/shared/constants/ExpenseCategory'
+import { EXPENSE_CATEGORIES } from '@/shared/constants/transactionCategory'
 import { z } from 'zod'
 
 // 응답 스키마
