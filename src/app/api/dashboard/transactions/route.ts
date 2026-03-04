@@ -1,4 +1,4 @@
-import { EXPENSE_CATEGORIES } from '@/shared/constants/transactionCategory'
+import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/shared/constants/transactionCategory'
 import { apiError } from '@/shared/lib/api/apiError'
 import { getUser } from '@/shared/lib/api/getUser'
 import { NextResponse } from 'next/server'
@@ -7,7 +7,7 @@ import { z } from 'zod'
 // 지출 추가/수입 추가 API =========================================================
 const CreateTransactionBodySchema = z.object({
   type: z.enum(['OUT', 'IN']),
-  category: z.enum(EXPENSE_CATEGORIES),
+  category: z.union([z.enum(EXPENSE_CATEGORIES), z.enum(INCOME_CATEGORIES)]),
   amount: z.number().int().min(0, 'amount 값은 0 이상'),
   isFixed: z.boolean(),
   createdAt: z.string().datetime().optional(),
