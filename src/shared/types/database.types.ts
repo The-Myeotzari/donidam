@@ -379,6 +379,18 @@ export type Database = {
         Args: { p_parent_id: string; p_promise_id: number }
         Returns: undefined
       }
+      sum_monthly_amount_by_category_zeros: {
+        Args: {
+          categories: string[]
+          range_end: string
+          range_start: string
+          tx_type?: string
+        }
+        Returns: {
+          amount: number
+          category: string
+        }[]
+      }
     }
     Enums: {
       promise_status:
@@ -399,6 +411,9 @@ export type Database = {
         | "EDUCATION"
         | "LEISURE"
         | "ETC"
+        | "SALARY"
+        | "SIDE_JOB"
+        | "ALLOWANCE"
       tx_type: "IN" | "OUT"
       user_role: "PARENT" | "CHILD"
     }
@@ -547,6 +562,9 @@ export const Constants = {
         "EDUCATION",
         "LEISURE",
         "ETC",
+        "SALARY",
+        "SIDE_JOB",
+        "ALLOWANCE",
       ],
       tx_type: ["IN", "OUT"],
       user_role: ["PARENT", "CHILD"],
