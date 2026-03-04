@@ -12,6 +12,7 @@ const MainCardVarsFullSchema = z
   .object({
     elapsedPercent: z.number().min(0).max(100),
     spendPercent: z.number().min(0), // 예산 초과 시 100+ 가능
+    totalExpense: z.number().min(0),
     remainingAmount: z.number(), // 예산 초과면 음수 가능
     remainingDays: z.number().int().min(0).max(31),
     dailyRecommendedAmount: z.number(), // 상황에 따라 0/음수도 가능하니 number로
