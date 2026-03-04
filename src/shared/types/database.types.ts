@@ -411,6 +411,9 @@ export type Database = {
         | "EDUCATION"
         | "LEISURE"
         | "ETC"
+        | "SALARY"
+        | "SIDE_JOB"
+        | "ALLOWANCE"
       tx_type: "IN" | "OUT"
       user_role: "PARENT" | "CHILD"
     }
@@ -559,6 +562,9 @@ export const Constants = {
         "EDUCATION",
         "LEISURE",
         "ETC",
+        "SALARY",
+        "SIDE_JOB",
+        "ALLOWANCE",
       ],
       tx_type: ["IN", "OUT"],
       user_role: ["PARENT", "CHILD"],
