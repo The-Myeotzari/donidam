@@ -2,14 +2,16 @@
 
 import { useMainDashboardCardQuery } from '@/entities/dashboard-card/api/dashboardCard.queries'
 import { ROUTES } from '@/shared/constants/route'
+import cn from '@/shared/lib/cn'
 import { DoughnutChart } from '@/widgets/monthly-expense/ui/DoughnutChart'
 import Link from 'next/link'
 
 type Props = {
   month?: string
+  showDetailLink?: boolean
 }
 
-export function MonthlyExpenseSummary({ month }: Props) {
+export function MonthlyExpenseSummary({ month, showDetailLink = true }: Props) {
   const { data } = useMainDashboardCardQuery(month)
 
   if (!data || !('totalExpense' in data.vars)) return null
@@ -17,17 +19,20 @@ export function MonthlyExpenseSummary({ month }: Props) {
   const { spendPercent, totalExpense, remainingAmount } = data.vars
 
   return (
-    <section className="bg-card rounded-2xl mt-6 p-5 card-shadow">
+    <section className={cn('bg-card rounded-2xl p-5 card-shadow', showDetailLink ? 'mt-6' : '')}>
       {/* 헤더 */}
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold">이번 달 지출</h3>
-        <Link
-          href={ROUTES.dashboardMonthly}
-          className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-        >
-          상세보기 &gt;
-        </Link>
-      </div>
+      {showDetailLink && (
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-semibold">이번 달 지출</h3>
+
+          <Link
+            href={ROUTES.dashboardMonthly}
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            상세보기 &gt;
+          </Link>
+        </div>
+      )}
 
       {/* 콘텐츠 */}
       <div className="flex items-center gap-6">
