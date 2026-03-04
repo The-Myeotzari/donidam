@@ -41,7 +41,7 @@ export function SetBudgetButton() {
       <Modal isOpen={isOpen} onClose={handleClose}>
         <Modal.Header>이번 달 예산 설정</Modal.Header>
 
-        <Modal.Content>
+        <Modal.Content className="pt-4">
           <SetBudgetForm
             amount={amount}
             onAmountChange={setAmount}

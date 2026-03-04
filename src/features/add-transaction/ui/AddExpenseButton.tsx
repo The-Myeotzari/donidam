@@ -31,7 +31,7 @@ export function AddExpenseButton() {
       <Modal isOpen={isOpen} onClose={handleClose}>
         <Modal.Header>지출 추가</Modal.Header>
 
-        <Modal.Content className="max-h-[65vh] overflow-y-auto">
+        <Modal.Content className="max-h-[65vh] overflow-y-auto pt-4">
           <AddExpenseForm
             onSubmitData={(payload) =>
               mutation.mutate(payload, {
