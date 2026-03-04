@@ -61,7 +61,7 @@ export function DoughnutChart({ percent }: { percent: number }) {
     <div className="relative shrink-0" style={{ width: 96, height: 96 }}>
       <canvas ref={canvasRef} width={96} height={96} />
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <span className="text-sm font-bold tabular-nums">{clampedPercent}%</span>
+        <span className="text-md font-bold tabular-nums text-primary">{clampedPercent}%</span>
       </div>
     </div>
   )
