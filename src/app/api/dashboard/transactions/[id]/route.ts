@@ -1,4 +1,4 @@
-import { TRANSACTION_CATEGORIES, TransactionCategory } from '@/shared/constants/transactionCategory'
+import { EXPENSE_CATEGORIES, ExpenseCategory } from '@/shared/constants/transactionCategory'
 import { apiError } from '@/shared/lib/api/apiError'
 import { getUser } from '@/shared/lib/api/getUser'
 import { NextResponse } from 'next/server'
@@ -51,7 +51,7 @@ export async function GET(request: Request, context: RouteContext) {
 
 const UpdateTransactionBodySchema = z
   .object({
-    category: z.enum(TRANSACTION_CATEGORIES).optional(),
+    category: z.enum(EXPENSE_CATEGORIES).optional(),
     amount: z.number().int().min(0).optional(),
     isFixed: z.boolean().optional(),
   })
@@ -96,7 +96,7 @@ export async function PATCH(request: Request, context: RouteContext) {
     updated_at: new Date().toISOString(),
   }
 
-  if (body.category) updatePayload.category = body.category as TransactionCategory
+  if (body.category) updatePayload.category = body.category as ExpenseCategory
 
   if (body.amount !== undefined) updatePayload.amount = body.amount
 

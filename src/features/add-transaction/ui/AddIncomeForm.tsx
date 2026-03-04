@@ -1,45 +1,63 @@
+import { toISODateTime } from '@/features/add-transaction/lib/toISODateTime'
+import type {
+  CreateIncomePayload,
+  IncomeFormState,
+} from '@/features/add-transaction/model/addTransaction.type'
 import {
   INCOME_CATEGORIES,
   INCOME_CATEGORY_ICON,
   INCOME_CATEGORY_LABEL,
   INCOME_CATEGORY_THEME,
-  type IncomeCategory,
-} from '@/shared/constants/incomeCategory'
+} from '@/shared/constants/transactionCategory'
 import cn from '@/shared/lib/cn'
 import { Input } from '@/shared/ui/Input'
+import { Toggle } from '@/shared/ui/Toggle'
 import { useState } from 'react'
 
-// 폼 상태
-type FormState = {
-  amount: string
-  category: IncomeCategory | null
-  description: string
-  date: string
-  endDate: string
-}
+export const ADD_INCOME_FORM_ID = 'add-income-form'
 
-const initialForm = (): FormState => ({
+const initialForm = (): IncomeFormState => ({
   amount: '',
   category: null,
   description: '',
+  isFixed: false,
   date: new Date().toISOString().split('T')[0],
   endDate: '',
 })
 
-// 폼
-export function AddIncomeForm() {
-  const [form, setForm] = useState<FormState>(initialForm)
+interface AddIncomeFormProps {
+  onSubmitData: (payload: CreateIncomePayload) => void
+}
 
-  const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
+export function AddIncomeForm({ onSubmitData }: AddIncomeFormProps) {
+  const [form, setForm] = useState<IncomeFormState>(initialForm)
+
+  const set = <K extends keyof IncomeFormState>(key: K, value: IncomeFormState[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
   const displayAmount = form.amount ? Number(form.amount).toLocaleString('ko-KR') : ''
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!form.category || !form.amount) return
+
+    onSubmitData({
+      type: 'IN',
+      category: form.category,
+      amount: Number(form.amount),
+      isFixed: form.isFixed,
+      createdAt: toISODateTime(form.date),
+      endDate: form.isFixed && form.endDate ? toISODateTime(form.endDate) : undefined,
+    })
+  }
+
   return (
-    <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+    <form id={ADD_INCOME_FORM_ID} onSubmit={handleSubmit} className="space-y-5">
       {/* 금액 */}
       <div className="space-y-1.5">
-        <label className="text-sm font-medium">금액</label>
+        <label className="text-sm font-medium">
+          금액 <span className="text-destructive">*</span>
+        </label>
         <Input size="lg">
           <Input.Field
             type="text"
@@ -56,7 +74,9 @@ export function AddIncomeForm() {
 
       {/* 카테고리 */}
       <div className="space-y-2">
-        <label className="text-sm font-medium">카테고리</label>
+        <label className="text-sm font-medium">
+          카테고리 <span className="text-destructive">*</span>
+        </label>
         <div className="grid grid-cols-4 gap-2">
           {INCOME_CATEGORIES.map((cat) => {
             const Icon = INCOME_CATEGORY_ICON[cat]
@@ -105,9 +125,20 @@ export function AddIncomeForm() {
         />
       </div>
 
+      {/* 고정수입 */}
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium">고정수입 인가요?</span>
+        <Toggle
+          checked={form.isFixed}
+          onCheckedChange={(v) => set('isFixed', v)}
+          label="고정수입"
+          labelable={false}
+        />
+      </div>
+
       {/* 날짜 / 시작일 */}
       <div className="space-y-1.5">
-        <label className="text-sm font-medium">날짜</label>
+        <label className="text-sm font-medium">{form.isFixed ? '시작일' : '날짜'}</label>
         <Input>
           <Input.Field
             type="date"
@@ -116,6 +147,20 @@ export function AddIncomeForm() {
           />
         </Input>
       </div>
+
+      {/* 종료일 - 고정수입일 때만 표시 */}
+      {form.isFixed && (
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium">종료일</label>
+          <Input>
+            <Input.Field
+              type="date"
+              value={form.endDate}
+              onChange={(e) => set('endDate', e.target.value)}
+            />
+          </Input>
+        </div>
+      )}
 
       {/* 거래 계좌 */}
       <div className="space-y-1.5">

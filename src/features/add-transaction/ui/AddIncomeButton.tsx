@@ -1,13 +1,22 @@
 'use client'
 
-import { AddIncomeForm } from '@/features/add-transaction/ui/AddIncomeForm'
+import { useAddExpenseMutation } from '@/features/add-transaction/api/addTransaction.mutation'
+import { ADD_INCOME_FORM_ID, AddIncomeForm } from '@/features/add-transaction/ui/AddIncomeForm'
+import { isApiRequestError } from '@/shared/lib/api/api'
 import { Button } from '@/shared/ui/Button'
 import { Modal } from '@/shared/ui/Modal'
-import { TrendingUp } from 'lucide-react'
+import { Loader2, TrendingUp } from 'lucide-react'
 import { useState } from 'react'
 
 export function AddIncomeButton() {
   const [isOpen, setIsOpen] = useState(false)
+  const mutation = useAddExpenseMutation()
+
+  const handleClose = () => {
+    if (mutation.isPending) return
+    setIsOpen(false)
+    mutation.reset()
+  }
 
   return (
     <>
@@ -21,14 +30,38 @@ export function AddIncomeButton() {
 
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <Modal.Header>수입 추가</Modal.Header>
+
         <Modal.Content className="max-h-[65vh] overflow-y-auto">
-          <AddIncomeForm />
+          <AddIncomeForm
+            onSubmitData={(payload) =>
+              mutation.mutate(payload, {
+                onSuccess: () => setIsOpen(false),
+              })
+            }
+          />
         </Modal.Content>
         <Modal.Footer>
-          <Button variant="outline" size="md" onClick={() => setIsOpen(false)}>
+          {mutation.isError && (
+            <p className="flex-1 text-sm text-destructive">
+              {isApiRequestError(mutation.error)
+                ? mutation.error.data.detail
+                : '오류가 발생했습니다. 다시 시도해 주세요.'}
+            </p>
+          )}
+
+          <Button variant="outline" size="md" onClick={handleClose} disabled={mutation.isPending}>
             취소
           </Button>
-          <Button size="md">추가하기</Button>
+          <Button type="submit" form={ADD_INCOME_FORM_ID} size="md" disabled={mutation.isPending}>
+            {mutation.isPending ? (
+              <>
+                <Loader2 size={14} className="animate-spin" />
+                추가 중...
+              </>
+            ) : (
+              '추가하기'
+            )}
+          </Button>
         </Modal.Footer>
       </Modal>
     </>

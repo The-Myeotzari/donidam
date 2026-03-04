@@ -1,4 +1,4 @@
-import { TRANSACTION_CATEGORIES } from '@/shared/constants/transactionCategory'
+import { EXPENSE_CATEGORIES } from '@/shared/constants/transactionCategory'
 import { apiError } from '@/shared/lib/api/apiError'
 import { getUser } from '@/shared/lib/api/getUser'
 import { NextResponse } from 'next/server'
@@ -7,7 +7,7 @@ import { z } from 'zod'
 // 지출 추가/수입 추가 API =========================================================
 const CreateTransactionBodySchema = z.object({
   type: z.enum(['OUT', 'IN']),
-  category: z.enum(TRANSACTION_CATEGORIES),
+  category: z.enum(EXPENSE_CATEGORIES),
   amount: z.number().int().min(0, 'amount 값은 0 이상'),
   isFixed: z.boolean(),
   createdAt: z.string().datetime().optional(),
@@ -78,7 +78,7 @@ export async function POST(request: Request) {
 
 // 거래 조회 API =========================================================
 type SortOption = 'createdAt:desc' | 'createdAt:asc'
-type TransactionCategory = (typeof TRANSACTION_CATEGORIES)[number]
+type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number]
 
 const DEFAULT_LIMIT = 20
 const MAX_LIMIT = 100
@@ -157,11 +157,9 @@ export async function GET(request: Request) {
     ? categoriesParam
         .split(',')
         .map((c) => c.trim())
-        .filter((c): c is TransactionCategory =>
-          TRANSACTION_CATEGORIES.includes(c as TransactionCategory),
-        )
-    : category && TRANSACTION_CATEGORIES.includes(category as TransactionCategory)
-      ? [category as TransactionCategory]
+        .filter((c): c is ExpenseCategory => EXPENSE_CATEGORIES.includes(c as ExpenseCategory))
+    : category && EXPENSE_CATEGORIES.includes(category as ExpenseCategory)
+      ? [category as ExpenseCategory]
       : undefined
 
   let cursorPayload: { lastId: number; lastCreatedAt: string } | null = null

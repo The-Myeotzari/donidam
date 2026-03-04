@@ -2,7 +2,7 @@ import {
   monthToKstRange,
   resolveMonthFirstDay,
 } from '@/app/api/dashboard/main-card/mainCard.server'
-import { TRANSACTION_CATEGORIES, TransactionCategory } from '@/shared/constants/transactionCategory'
+import { EXPENSE_CATEGORIES, ExpenseCategory } from '@/shared/constants/transactionCategory'
 import { apiError } from '@/shared/lib/api/apiError'
 import { getUser } from '@/shared/lib/api/getUser'
 import { NextResponse } from 'next/server'
@@ -33,7 +33,7 @@ export async function GET(request: Request) {
 
   // 카테고리 별 지출 조회
   const { data, error } = await supabase.rpc('sum_monthly_amount_by_category_zeros', {
-    categories: Array.from(TRANSACTION_CATEGORIES),
+    categories: Array.from(EXPENSE_CATEGORIES),
     range_start: rangeStart,
     range_end: rangeEnd,
     tx_type: 'OUT',
@@ -44,10 +44,10 @@ export async function GET(request: Request) {
   }
 
   // 전달할 데이터 정리
-  const items: { category: TransactionCategory; amount: number; ratio: number }[] = []
+  const items: { category: ExpenseCategory; amount: number; ratio: number }[] = []
 
-  for (const row of (data ?? []) as { category: TransactionCategory; amount: number }[]) {
-    const categoryStr = String(row.category) as TransactionCategory
+  for (const row of (data ?? []) as { category: ExpenseCategory; amount: number }[]) {
+    const categoryStr = String(row.category) as ExpenseCategory
     const amount = Math.floor(row.amount ?? 0)
     items.push({ category: categoryStr, amount, ratio: 0 })
   }

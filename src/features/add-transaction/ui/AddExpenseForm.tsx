@@ -4,10 +4,10 @@ import type {
   FormState,
 } from '@/features/add-transaction/model/addTransaction.type'
 import {
-  TRANSACTION_CATEGORIES,
-  TRANSACTION_CATEGORY_ICON,
-  TRANSACTION_CATEGORY_LABEL,
-  TRANSACTION_CATEGORY_THEME,
+  EXPENSE_CATEGORIES,
+  EXPENSE_CATEGORY_ICON,
+  EXPENSE_CATEGORY_LABEL,
+  EXPENSE_CATEGORY_THEME,
 } from '@/shared/constants/transactionCategory'
 import cn from '@/shared/lib/cn'
 import { Input } from '@/shared/ui/Input'
@@ -80,9 +80,9 @@ export function AddExpenseForm({ onSubmitData }: AddExpenseFormProps) {
           카테고리 <span className="text-destructive">*</span>
         </label>
         <div className="grid grid-cols-4 gap-2">
-          {TRANSACTION_CATEGORIES.map((cat) => {
-            const Icon = TRANSACTION_CATEGORY_ICON[cat]
-            const theme = TRANSACTION_CATEGORY_THEME[cat]
+          {EXPENSE_CATEGORIES.map((cat) => {
+            const Icon = EXPENSE_CATEGORY_ICON[cat]
+            const theme = EXPENSE_CATEGORY_THEME[cat]
             const isSelected = form.category === cat
             return (
               <button
@@ -104,7 +104,7 @@ export function AddExpenseForm({ onSubmitData }: AddExpenseFormProps) {
                 >
                   <Icon size={22} className={theme.icon} />
                 </div>
-                <span className="text-xs font-medium">{TRANSACTION_CATEGORY_LABEL[cat]}</span>
+                <span className="text-xs font-medium">{EXPENSE_CATEGORY_LABEL[cat]}</span>
               </button>
             )
           })}
