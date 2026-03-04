@@ -1,6 +1,6 @@
 import cn from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/Button'
-import { useState } from 'react'
+import { Loader2 } from 'lucide-react'
 
 const PRESETS = [
   { label: '100만원', value: '1000000' },
@@ -9,13 +9,29 @@ const PRESETS = [
   { label: '300만원', value: '3000000' },
 ] as const
 
-export function SetBudgetForm() {
-  const [amount, setAmount] = useState('')
+interface SetBudgetFormProps {
+  amount: string
+  onAmountChange: (value: string) => void
+  isPending?: boolean
+  onSubmit: () => void
+}
 
+export function SetBudgetForm({
+  amount,
+  onAmountChange,
+  isPending = false,
+  onSubmit,
+}: SetBudgetFormProps) {
   const displayAmount = amount ? Number(amount).toLocaleString('ko-KR') : ''
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!amount) return
+    onSubmit()
+  }
+
   return (
-    <div className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       {/* 안내 문구 */}
       <p className="text-sm text-muted-foreground">이번 달 지출 목표 금액을 설정하세요</p>
 
@@ -26,7 +42,7 @@ export function SetBudgetForm() {
           inputMode="numeric"
           placeholder="0"
           value={displayAmount}
-          onChange={(e) => setAmount(e.target.value.replace(/[^0-9]/g, ''))}
+          onChange={(e) => onAmountChange(e.target.value.replace(/[^0-9]/g, ''))}
           className="w-full bg-transparent text-right text-3xl font-bold focus:outline-none placeholder:text-muted-foreground/40"
         />
         <span className="shrink-0 text-xl font-semibold text-muted-foreground pb-0.5">원</span>
@@ -38,7 +54,7 @@ export function SetBudgetForm() {
           <button
             key={preset.value}
             type="button"
-            onClick={() => setAmount(preset.value)}
+            onClick={() => onAmountChange(preset.value)}
             className={cn(
               'h-11 rounded-2xl border text-sm font-medium transition-colors',
               amount === preset.value
@@ -54,11 +70,18 @@ export function SetBudgetForm() {
       {/* 설정 완료 */}
       <Button
         type="submit"
-        disabled={!amount}
+        disabled={!amount || isPending}
         className="w-full h-12 rounded-2xl gradient-mint text-primary-foreground disabled:opacity-40 border-0"
       >
-        설정 완료
+        {isPending ? (
+          <>
+            <Loader2 size={16} className="animate-spin" />
+            저장 중...
+          </>
+        ) : (
+          '설정 완료'
+        )}
       </Button>
-    </div>
+    </form>
   )
 }
