@@ -13,7 +13,7 @@ export default async function Page() {
 
   await queryClient.prefetchQuery({
     queryKey: QUERY_KEYS.DASHBOARD.mainCard(),
-    queryFn: () => fetchMainDashboardCard(undefined, { headers: { Cookie: cookie } }),
+    queryFn: () => fetchMainDashboardCard(undefined, { headers: { Cookie: cookie }, cache: 'no-store' }),
   })
 
   return (

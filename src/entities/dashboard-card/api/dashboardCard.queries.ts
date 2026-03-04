@@ -14,5 +14,6 @@ export function useMainDashboardCardQuery(month?: string) {
     queryKey: QUERY_KEYS.DASHBOARD.mainCard(month),
     queryFn: () => fetchMainDashboardCard(month),
     staleTime: 60_000,
+    gcTime: 0,
   })
 }
