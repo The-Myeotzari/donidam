@@ -87,6 +87,7 @@ export async function GET(request: Request) {
       vars: {
         elapsedPercent,
         spendPercent,
+        totalExpense,
         remainingAmount,
         remainingDays,
         dailyRecommendedAmount,

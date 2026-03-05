@@ -13,7 +13,7 @@ export const HEADER_ROUTES: HeaderConfig[] = [
   { pattern: ROUTES.auth, hide: true },
 
   // (main) dashboard
-  { pattern: ROUTES.dashboard, hide: true },
+  { pattern: ROUTES.dashboard },
   {
     pattern: ROUTES.dashboardMonthly,
     title: undefined, // 커스텀 주입
