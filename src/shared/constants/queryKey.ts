@@ -10,4 +10,8 @@ export const QUERY_KEYS = {
     all: ['budget'] as const,
     current: () => ['budget', 'current'] as const,
   },
+  SPENDING_BY_CATEGORY: {
+    all: ['spending-by-category'] as const,
+    byMonth: (month?: string) => ['spending-by-category', month ?? 'current'] as const,
+  },
 }
