@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { HomeIcon, CreditCardIcon, CalendarDays, ChartColumn, TextAlignJustify } from 'lucide-react'
+import { HomeIcon, CalendarDays, ChartColumn, TextAlignJustify } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { ROUTES } from '@/shared/constants/route'
 import cn from '@/shared/lib/cn'
@@ -15,7 +15,8 @@ type NavItem = {
 
 const NAV_ITEMS: NavItem[] = [
   { icon: HomeIcon, label: '홈', href: ROUTES.dashboard },
-  { icon: CreditCardIcon, label: '자동기입', href: ROUTES.autoFill },
+  // TODO: 자동기입 기능 보류 (오픈뱅킹 API 연동 필요)
+  // { icon: CreditCardIcon, label: '자동기입', href: ROUTES.autoFill },
   { icon: CalendarDays, label: '캘린더', href: ROUTES.calendar },
   { icon: ChartColumn, label: '통계', href: ROUTES.stats },
   { icon: TextAlignJustify, label: '더보기', href: ROUTES.menu },
