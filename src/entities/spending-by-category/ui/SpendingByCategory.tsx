@@ -1,12 +1,12 @@
 'use client'
 
 import { useSpendingByCategoryQuery } from '@/entities/spending-by-category/api/spendingByCategory.queries'
+import { CategoryDoughnutChart } from '@/entities/spending-by-category/ui/CategoryDoughnutChart'
 import {
   EXPENSE_CATEGORY_ICON,
   EXPENSE_CATEGORY_LABEL,
   EXPENSE_CATEGORY_THEME,
 } from '@/shared/constants/transactionCategory'
-import { CategoryDoughnutChart } from '@/widgets/monthly-expense-spending-by-category/ui/CategoryDoughnutChart'
 
 type Props = {
   month?: string
