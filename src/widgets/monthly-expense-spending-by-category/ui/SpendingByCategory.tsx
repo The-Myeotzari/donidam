@@ -42,13 +42,13 @@ export function SpendingByCategory({ month }: Props) {
                 <li key={item.category} className="flex items-center gap-2.5">
                   {/* 아이콘 */}
                   <div
-                    className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${theme.bg}`}
+                    className={`shrink-0 w-8 h-8 rounded-md flex items-center justify-center ${theme.bg}`}
                   >
                     <Icon size={15} className={theme.icon} />
                   </div>
 
                   {/* 라벨 */}
-                  <span className="flex-1 text-xs font-medium text-foreground">
+                  <span className="flex-1 text-xs font-medium">
                     {EXPENSE_CATEGORY_LABEL[item.category]}
                   </span>
 
