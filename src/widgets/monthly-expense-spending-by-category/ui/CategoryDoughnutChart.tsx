@@ -65,6 +65,7 @@ export function CategoryDoughnutChart({ items }: Props) {
       chartRef.current?.destroy()
       chartRef.current = null
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(activeItems)])
 
   return (
