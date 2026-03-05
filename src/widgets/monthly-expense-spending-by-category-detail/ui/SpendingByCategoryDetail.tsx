@@ -16,8 +16,6 @@ export function SpendingByCategoryDetail({ month }: Props) {
 
   if (!data) return null
 
-  console.log(data)
-
   return (
     <section className="bg-card rounded-2xl p-5 card-shadow mt-4">
       <h3 className="text-sm font-semibold mb-4">카테고리 상세</h3>
