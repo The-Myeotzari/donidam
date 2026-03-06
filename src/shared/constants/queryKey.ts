@@ -14,4 +14,9 @@ export const QUERY_KEYS = {
     all: ['spending-by-category'] as const,
     byMonth: (month?: string) => ['spending-by-category', month ?? 'current'] as const,
   },
+  TRANSACTIONS: {
+    all: ['transactions'] as const,
+    recent: (limit?: number) => ['transactions', 'recent', limit ?? 5] as const,
+    list: (params?: Record<string, string>) => ['transactions', 'list', params ?? {}] as const,
+  },
 }

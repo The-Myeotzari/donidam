@@ -1,20 +1,31 @@
 'use client'
 
+import { FilterButton } from '@/features/transaction-filter/ui/FilterButton'
+import { TransactionsHeaderTitle } from '@/features/transaction-filter/ui/TransactionsHeaderTitle'
 import { ROUTES } from '@/shared/constants/route'
 import { BottomNav } from '@/shared/layout/BottomNav'
 import { Header } from '@/shared/layout/header/Header'
-import { Bell, ListFilter } from 'lucide-react'
+import { Bell } from 'lucide-react'
 import { usePathname } from 'next/navigation'
+import { Suspense } from 'react'
 
 // 라우트별 헤더 설정
 type DashboardHeaderConfig = {
   subtitle: string
+  titleNode?: React.ReactNode
   right?: React.ReactNode
 }
 
+const currentDate = new Date()
+const defaultTitle = (
+  <span className="text-muted-foreground text-sm">
+    {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
+  </span>
+)
+
 const HEADER_CONFIG: Record<string, DashboardHeaderConfig> = {
   [ROUTES.dashboard]: {
-    subtitle: '돈이담',
+    subtitle: '돈이담 💰',
     right: (
       <button className="w-10 h-10 rounded-full bg-card card-shadow flex items-center justify-center">
         <Bell size={20} className="text-muted-foreground" />
@@ -26,10 +37,15 @@ const HEADER_CONFIG: Record<string, DashboardHeaderConfig> = {
   },
   [ROUTES.dashboardTransactions]: {
     subtitle: '전체 거래 내역',
+    titleNode: (
+      <Suspense fallback={`${currentDate.getFullYear()}년 ${currentDate.getMonth() + 1}월`}>
+        <TransactionsHeaderTitle />
+      </Suspense>
+    ),
     right: (
-      <button className="w-10 h-10 rounded-full bg-card card-shadow flex items-center justify-center">
-        <ListFilter size={20} className="text-muted-foreground" />
-      </button>
+      <Suspense fallback={<div className="w-10 h-10" />}>
+        <FilterButton />
+      </Suspense>
     ),
   },
 }
@@ -39,7 +55,6 @@ const HEADER_CONFIG: Record<string, DashboardHeaderConfig> = {
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const config = HEADER_CONFIG[pathname]
-  const currentDate = new Date()
 
   return (
     <>
@@ -48,7 +63,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           className="relative"
           title={
             <span className="text-muted-foreground text-sm">
-              {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
+              {config.titleNode ?? defaultTitle}
             </span>
           }
           subtitle={
