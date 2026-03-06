@@ -33,7 +33,7 @@ export function TransactionItem({ item }: Props) {
   const dateLabel = formatDate(item.createdAt)
 
   return (
-    <li className="flex items-center gap-3 pb-3 border-b">
+    <li className="flex items-center gap-3 py-3 border-b last:border-b-0 last:pb-0">
       {/* 아이콘 */}
       <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${theme.bg}`}>
         <Icon size={18} className={theme.icon} />
