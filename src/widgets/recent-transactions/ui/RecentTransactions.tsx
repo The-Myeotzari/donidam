@@ -33,7 +33,7 @@ export function RecentTransactions({ limit = RECENT_LIMIT }: Props) {
       {data.items.length === 0 ? (
         <p className="text-xs text-muted-foreground text-center py-4">거래 내역이 없습니다.</p>
       ) : (
-        <ul className="space-y-4">
+        <ul className="space-y-3">
           {data.items.map((item) => (
             <TransactionItem key={item.id} item={item} />
           ))}
