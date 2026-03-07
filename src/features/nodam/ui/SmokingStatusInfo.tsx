@@ -3,13 +3,14 @@ import {ArrowRight} from "lucide-react";
 
 interface Status {
   status: string
+  setStep: React.Dispatch<React.SetStateAction<number>>
 }
 
-export default function SmokingStatusInfo({ status }: Status) {
+export default function SmokingStatusInfo({ status, setStep }: Status) {
   if (status === "yes") {
     return (
       <div>
-        <Button fullWidth={true} size={"xl"} rightIcon={<ArrowRight width={15}/>}>다음</Button>
+        <Button fullWidth={true} size={"xl"} rightIcon={<ArrowRight width={15}/>} onClick={() => setStep(2)}>다음</Button>
       </div>
     )
   }

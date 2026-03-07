@@ -5,7 +5,11 @@ import {Cigarette, X} from "lucide-react";
 import SmokingStatusInfo from "@/features/nodam/ui/SmokingStatusInfo";
 import { useState } from "react";
 
-export default function NodamOnboarding() {
+interface Props {
+  setStep: React.Dispatch<React.SetStateAction<number>>
+}
+
+export default function NodamCheck({setStep}: Props) {
   const [status, setState] = useState<"yes" | "no" | "">("");
 
   return (
@@ -31,7 +35,7 @@ export default function NodamOnboarding() {
         />
       </div>
       <div>
-        <SmokingStatusInfo status={status}/>
+        <SmokingStatusInfo status={status} setStep={setStep}/>
       </div>
     </div>
   )

@@ -1,9 +1,25 @@
-import NodamOnboarding from "@/widgets/nodam/ui/NodamOnboarding";
+'use client'
 
-export default function page () {
+import NodamCheck from "@/widgets/nodam/ui/NodamCheck";
+import NodamStart from "@/widgets/nodam/ui/NodamStart";
+import { useState } from "react";
+
+export default function Page () {
+  const [step, setStep] = useState<number>(1);
+
   return (
     <>
-      <NodamOnboarding />
+      {
+        step === 1 ? (
+          <>
+            <NodamCheck setStep={setStep}/>
+          </>
+        ) : (
+          <>
+            <NodamStart setStep={setStep}/>
+          </>
+        )
+      }
     </>
   )
 }
