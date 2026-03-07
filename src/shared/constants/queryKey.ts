@@ -19,4 +19,10 @@ export const QUERY_KEYS = {
     recent: (limit?: number) => ['transactions', 'recent', limit ?? 5] as const,
     list: (params?: Record<string, string>) => ['transactions', 'list', params ?? {}] as const,
   },
+
+STATS: {
+    summary: (month?: string) => ['stats', 'summary', month ?? 'current'] as const,
+    dailyTrend: (month?: string) => ['stats', 'daily-trend', month ?? 'current'] as const,
+
+  },
 }
