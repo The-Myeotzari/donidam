@@ -1,3 +1,4 @@
+import cn from '@/shared/lib/cn'
 import { Card } from '@/shared/ui/Card'
 import { ChevronRight } from 'lucide-react'
 import Link from 'next/link'
@@ -7,14 +8,28 @@ interface MenuCardItemProps {
   title: string
   description: string
   href: string
+  cardClassName?: string
+  iconClassName?: string
 }
 
-export function MenuCardItem({ icon, title, description, href }: MenuCardItemProps) {
+export function MenuCardItem({
+  icon,
+  title,
+  description,
+  href,
+  cardClassName,
+  iconClassName,
+}: MenuCardItemProps) {
   return (
     <Link href={href}>
-      <Card hoverable className="p-4">
+      <Card hoverable className={cn('p-4', cardClassName)}>
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-(--primary)/10 flex items-center justify-center text-primary shrink-0">
+          <div
+            className={cn(
+              'w-12 h-12 rounded-2xl bg-(--primary)/10 flex items-center justify-center text-primary shrink-0',
+              iconClassName,
+            )}
+          >
             {icon}
           </div>
           <div className="flex-1 min-w-0">
