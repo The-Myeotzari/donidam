@@ -10,6 +10,9 @@ import {
   BookOpen,
   Music,
   MoreHorizontal,
+  Banknote,
+  Briefcase,
+  Gift,
 } from 'lucide-react'
 import { Card } from '@/shared/ui/Card'
 import cn from '@/shared/lib/cn'
@@ -29,6 +32,9 @@ const CATEGORY_CONFIG: Record<
   EDUCATION: { label: '교육', color: '#9d63e1', icon: <BookOpen size={16} /> },
   LEISURE: { label: '여가', color: '#f5c43f', icon: <Music size={16} /> },
   ETC: { label: '기타', color: '#837b6e', icon: <MoreHorizontal size={16} /> },
+  SALARY: { label: '급여', color: '#36b86e', icon: <Banknote size={16} /> },
+  SIDE_JOB: { label: '부업', color: '#4fa9ea', icon: <Briefcase size={16} /> },
+  ALLOWANCE: { label: '용돈', color: '#f58e3d', icon: <Gift size={16} /> },
 }
 
 export { CATEGORY_CONFIG }
