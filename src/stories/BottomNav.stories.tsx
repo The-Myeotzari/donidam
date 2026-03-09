@@ -1,4 +1,4 @@
-import { BottomNav } from '@/shared/ui/BottomNav'
+import { BottomNav } from '@/shared/layout/BottomNav'
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
 const meta: Meta<typeof BottomNav> = {
@@ -30,4 +30,3 @@ export const Home: Story = {
     nextjs: { navigation: { pathname: '/' } },
   },
 }
-
