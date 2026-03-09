@@ -1,5 +1,6 @@
 'use client'
 
+import { ROUTES } from '@/shared/constants/route'
 import { createClient } from '@/shared/lib/supabase/client'
 import { Card } from '@/shared/ui/Card'
 import { LogOut } from 'lucide-react'
@@ -11,7 +12,7 @@ export function MenuLogoutButton() {
 
     const { data } = await supabase.auth.getSession()
     console.log(data.session) // null이면 로그아웃 OK
-    location.href = '/auth'
+    location.href = ROUTES.auth
   }
 
   return (
