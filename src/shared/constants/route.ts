@@ -18,6 +18,7 @@ export const ROUTES = {
   menuSettings: '/menu/settings',
   menuSettingsAlarm: '/menu/settings/alarm',
   menuSettingsPassword: '/menu/settings/password',
+  menuSettingsCard: '/menu/settings/card',
   menuSettingsTheme: '/menu/settings/theme',
   menuHelp: '/menu/help',
 
