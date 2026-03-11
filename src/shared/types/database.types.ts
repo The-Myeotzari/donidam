@@ -291,7 +291,7 @@ export type Database = {
           is_nodam_active?: boolean
           monthly_budget?: number
           role?: Database['public']['Enums']['user_role'] | null
-          app_pin: string | null
+          app_pin?: string | null
         }
         Update: {
           auto_allowance_amount?: number | null
@@ -302,7 +302,7 @@ export type Database = {
           is_nodam_active?: boolean
           monthly_budget?: number
           role?: Database['public']['Enums']['user_role'] | null
-          app_pin: string | null
+          app_pin?: string | null
         }
         Relationships: []
       }
