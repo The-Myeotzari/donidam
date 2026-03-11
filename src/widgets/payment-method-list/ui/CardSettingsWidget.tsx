@@ -7,9 +7,9 @@ import { useSetDefaultPaymentMethod } from '@/features/set-default-payment-metho
 import { Button } from '@/shared/ui/Button'
 import { Card } from '@/shared/ui/Card'
 import { Modal } from '@/shared/ui/Modal'
+import { PaymentMethodItem } from '@/widgets/payment-method-list/ui/PaymentMethodItem'
 import { CreditCard, Plus } from 'lucide-react'
 import { useState } from 'react'
-import { PaymentMethodItem } from './PaymentMethodItem'
 
 export function CardSettingsWidget() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -58,7 +58,13 @@ export function CardSettingsWidget() {
         </Card>
 
         {/* 추가 버튼 */}
-        <Button fullWidth size="xl" className="rounded-xl gap-2" leftIcon={<Plus size={18} />} onClick={() => setIsModalOpen(true)}>
+        <Button
+          fullWidth
+          size="xl"
+          className="rounded-xl gap-2"
+          leftIcon={<Plus size={18} />}
+          onClick={() => setIsModalOpen(true)}
+        >
           결제 수단 추가
         </Button>
       </div>
@@ -67,7 +73,10 @@ export function CardSettingsWidget() {
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <Modal.Header>결제 수단 추가</Modal.Header>
         <Modal.Content>
-          <AddPaymentMethodForm isFirst={methods.length === 0} onSuccess={() => setIsModalOpen(false)} />
+          <AddPaymentMethodForm
+            isFirst={methods.length === 0}
+            onSuccess={() => setIsModalOpen(false)}
+          />
         </Modal.Content>
       </Modal>
     </>

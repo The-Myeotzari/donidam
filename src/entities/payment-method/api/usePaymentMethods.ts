@@ -1,21 +1,8 @@
+import { PaymentMethodsSchema } from '@/entities/payment-method/model/payment.schema'
 import type { PaymentMethod } from '@/entities/payment-method/model/payment.types'
 import { QUERY_KEYS } from '@/shared/constants/queryKey'
 import { Api } from '@/shared/lib/api/api'
 import { useQuery } from '@tanstack/react-query'
-import { z } from 'zod'
-
-const PaymentMethodSchema = z.object({
-  id: z.string(),
-  user_id: z.string(),
-  type: z.enum(['card', 'account']),
-  name: z.string(),
-  last_four: z.string(),
-  bank_name: z.string(),
-  is_default: z.boolean(),
-  created_at: z.string(),
-})
-
-const PaymentMethodsSchema = z.array(PaymentMethodSchema)
 
 export function usePaymentMethods() {
   return useQuery({
