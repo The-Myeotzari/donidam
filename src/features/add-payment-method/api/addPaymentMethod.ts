@@ -1,25 +1,16 @@
 import type { AddPaymentMethodInput } from '@/features/add-payment-method/model/payment.schema'
-import { createClient } from '@/shared/lib/supabase/client'
+import { Api } from '@/shared/lib/api/api'
+import { z } from 'zod'
 
 export async function addPaymentMethod(
   input: AddPaymentMethodInput,
   isFirst: boolean,
 ): Promise<void> {
-  const supabase = createClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) throw new Error('로그인이 필요합니다')
-
-  const { error } = await supabase.from('payment_methods').insert({
-    user_id: user.id,
+  await Api.post('/payment-methods', z.unknown(), {
     type: input.type,
+    bankName: input.bankName,
     name: input.name,
-    last_four: input.lastFour,
-    bank_name: input.bankName,
-    is_default: isFirst,
+    lastFour: input.lastFour,
+    isFirst,
   })
-
-  if (error) throw new Error(error.message)
 }
