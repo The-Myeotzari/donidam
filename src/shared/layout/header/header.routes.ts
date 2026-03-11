@@ -78,6 +78,12 @@ export const HEADER_ROUTES: HeaderConfig[] = [
     backTo: ROUTES.menuSettings,
   },
   {
+    pattern: ROUTES.menuSettingsCard,
+    title: '결제 수단',
+    subtitle: '카드와 계좌를 관리하세요',
+    backTo: ROUTES.menuSettings,
+  },
+  {
     pattern: ROUTES.menuSettingsTheme,
     title: '테마',
     subtitle: '앱 테마를 선택하세요',

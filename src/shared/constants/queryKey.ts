@@ -20,9 +20,12 @@ export const QUERY_KEYS = {
     list: (params?: Record<string, string>) => ['transactions', 'list', params ?? {}] as const,
   },
 
-STATS: {
+  STATS: {
     summary: (month?: string) => ['stats', 'summary', month ?? 'current'] as const,
     dailyTrend: (month?: string) => ['stats', 'daily-trend', month ?? 'current'] as const,
-
+  },
+  PAYMENT_METHODS: {
+    all: ['payment-methods'] as const,
+    list: () => ['payment-methods', 'list'] as const,
   },
 }
