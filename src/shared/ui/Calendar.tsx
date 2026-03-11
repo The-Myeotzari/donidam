@@ -75,6 +75,7 @@ interface CalendarProps {
   value?: Date | null
   defaultValue?: Date | null
   onChange?: (date: Date) => void
+  onMonthChange?: (month: Date) => void
   isDateDisabled?: (date: Date) => boolean
   className?: string
 }
@@ -84,13 +85,19 @@ export const Calendar = ({
   value,
   defaultValue = null,
   onChange,
+  onMonthChange,
   isDateDisabled,
   className,
 }: CalendarProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(defaultValue)
-  const [currentMonth, setCurrentMonth] = useState<Date>(value || defaultValue || new Date())
+  const [currentMonth, setCurrentMonthState] = useState<Date>(value || defaultValue || new Date())
 
   const controlledDate = value !== undefined ? value : selectedDate
+
+  const setCurrentMonth = (date: Date) => {
+    setCurrentMonthState(date)
+    onMonthChange?.(date)
+  }
 
   const handleDateSelect = (date: Date) => {
     if (value === undefined) {
@@ -204,9 +211,10 @@ const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
 
 interface CalendarGridProps {
   className?: string
+  renderDayContent?: (date: Date) => React.ReactNode
 }
 
-const CalendarGrid = ({ className }: CalendarGridProps) => {
+const CalendarGrid = ({ className, renderDayContent }: CalendarGridProps) => {
   const { currentMonth, setCurrentMonth, selectedDate, onDateSelect, isDateDisabled } =
     useCalendarContext()
 
@@ -251,7 +259,8 @@ const CalendarGrid = ({ className }: CalendarGridProps) => {
               aria-selected={isSelected}
               aria-label={date.toLocaleDateString('ko-KR')}
               className={cn(
-                'mt-2 flex h-9 w-9 items-center justify-center rounded-md text-sm font-normal transition-colors',
+                'mt-2 flex w-9 flex-col items-center rounded-md text-sm font-normal transition-colors',
+                renderDayContent ? 'h-12 justify-start pt-1.5' : 'h-9 justify-center',
                 'hover:bg-accent hover:text-accent-foreground',
                 isTodayDate && 'bg-accent text-accent-foreground',
                 isSelected &&
@@ -261,7 +270,12 @@ const CalendarGrid = ({ className }: CalendarGridProps) => {
                   'cursor-not-allowed opacity-50 hover:bg-transparent hover:text-inherit',
               )}
             >
-              {date.getDate()}
+              <span>{date.getDate()}</span>
+              {renderDayContent && (
+                <div className="mt-0.5 flex h-2 items-center gap-0.5">
+                  {renderDayContent(date)}
+                </div>
+              )}
             </button>
           )
         })}

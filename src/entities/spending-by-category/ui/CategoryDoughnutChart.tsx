@@ -21,9 +21,10 @@ const EXPENSE_CATEGORY_CHART_COLOR: Record<ExpenseCategory, string> = {
 
 type Props = {
   items: SpendingByCategoryItem[]
+  className?: string
 }
 
-export function CategoryDoughnutChart({ items }: Props) {
+export function CategoryDoughnutChart({ items, className }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const chartRef = useRef<Chart | null>(null)
 
@@ -49,12 +50,13 @@ export function CategoryDoughnutChart({ items }: Props) {
           {
             data,
             backgroundColor: colors,
-            borderWidth: 0,
+            borderWidth: 3,
+            borderColor: 'white',
           },
         ],
       },
       options: {
-        cutout: '72%',
+        cutout: '60%',
         events: [],
         plugins: { tooltip: { enabled: false }, legend: { display: false } },
         animation: { duration: 400 },
@@ -69,7 +71,7 @@ export function CategoryDoughnutChart({ items }: Props) {
   }, [JSON.stringify(activeItems)])
 
   return (
-    <div className="relative shrink-0 w-24 h-24">
+    <div className={className ?? 'relative shrink-0 w-24 h-24'}>
       <canvas ref={canvasRef} />
     </div>
   )

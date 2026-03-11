@@ -21,7 +21,7 @@ export function SpendingByCategory({ month }: Props) {
 
   return (
     <section className="bg-card rounded-2xl p-5 card-shadow mt-4">
-      <h3 className="text-sm font-semibold mb-4">카테고리별 지출</h3>
+      <h3 className="text-md font-semibold mb-4">카테고리별 지출</h3>
 
       <div className="flex items-center gap-5">
         {/* 도넛 차트 */}
