@@ -1,7 +1,6 @@
-import { createClient } from '@/shared/lib/supabase/client'
+import { Api } from '@/shared/lib/api/api'
+import { z } from 'zod'
 
 export async function deletePaymentMethod(id: string): Promise<void> {
-  const supabase = createClient()
-  const { error } = await supabase.from('payment_methods').delete().eq('id', id)
-  if (error) throw new Error(error.message)
+  await Api.delete(`/payment-methods/${id}`, z.unknown())
 }
