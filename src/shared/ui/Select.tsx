@@ -1,9 +1,9 @@
 'use client'
 
+import cn from '@/shared/lib/cn'
+import { Check, ChevronDown } from 'lucide-react'
 import * as React from 'react'
 import { createPortal } from 'react-dom'
-import { Check, ChevronDown } from 'lucide-react'
-import cn from '@/shared/lib/cn'
 
 type SelectSize = 'sm' | 'md' | 'lg'
 
@@ -178,7 +178,9 @@ const SelectRoot = ({
 
   const registerItem = React.useCallback((item: ItemRecord) => {
     setItems((prev) => (prev.some((p) => p.id === item.id) ? prev : [...prev, item]))
-    setLabelMap((prev) => (prev[item.value] === item.label ? prev : { ...prev, [item.value]: item.label }))
+    setLabelMap((prev) =>
+      prev[item.value] === item.label ? prev : { ...prev, [item.value]: item.label },
+    )
   }, [])
 
   const unregisterItem = React.useCallback((id: string) => {
@@ -223,7 +225,7 @@ const SelectRoot = ({
       .map(({ idx }) => idx)
 
     const selectedIndex = value ? items.findIndex((it) => it.value === value && !it.disabled) : -1
-    setActiveIndex(selectedIndex >= 0 ? selectedIndex : enabledIndices[0] ?? -1)
+    setActiveIndex(selectedIndex >= 0 ? selectedIndex : (enabledIndices[0] ?? -1))
 
     requestAnimationFrame(() => contentRef.current?.focus())
   }, [open, items, value])
@@ -317,7 +319,8 @@ const SelectTrigger = React.forwardRef<HTMLButtonElement, SelectTriggerProps>(
     const setRefs = (node: HTMLButtonElement | null) => {
       triggerRef.current = node
       if (typeof forwardedRef === 'function') forwardedRef(node)
-      else if (forwardedRef) (forwardedRef as React.MutableRefObject<HTMLButtonElement | null>).current = node
+      else if (forwardedRef)
+        (forwardedRef as React.MutableRefObject<HTMLButtonElement | null>).current = node
     }
 
     const describedBy = [hasDescription ? descriptionId : null, hasMessage ? messageId : null]
@@ -392,8 +395,23 @@ SelectValue.displayName = 'SelectValue'
 type SelectContentProps = React.HTMLAttributes<HTMLDivElement>
 
 const SelectContent = ({ className, children, ...props }: SelectContentProps) => {
-  const { open, setOpen, disabled, listboxId, triggerRef, contentRef, items, activeIndex, setActiveIndex, closeAndFocusTrigger, side, align, offset, contentWidth, setValue } =
-    useSelect()
+  const {
+    open,
+    setOpen,
+    disabled,
+    listboxId,
+    triggerRef,
+    contentRef,
+    items,
+    activeIndex,
+    setActiveIndex,
+    closeAndFocusTrigger,
+    side,
+    align,
+    offset,
+    contentWidth,
+    setValue,
+  } = useSelect()
 
   const [mounted, setMounted] = React.useState(false)
   const [pos, setPos] = React.useState<{ top: number; left: number; width: number } | null>(null)
@@ -493,6 +511,7 @@ const SelectContent = ({ className, children, ...props }: SelectContentProps) =>
     <div
       style={{
         position: 'fixed',
+        zIndex: 50,
         top: pos?.top ?? 0,
         left: pos?.left ?? 0,
         width: pos?.width ?? undefined,
@@ -541,13 +560,30 @@ interface SelectItemProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode
 }
 
-const SelectItem = ({ value, disabled = false, className, children, ...props }: SelectItemProps) => {
-  const { items, registerItem, unregisterItem, activeIndex, setActiveIndex, setValue, closeAndFocusTrigger, value: selected } =
-    useSelect()
+const SelectItem = ({
+  value,
+  disabled = false,
+  className,
+  children,
+  ...props
+}: SelectItemProps) => {
+  const {
+    items,
+    registerItem,
+    unregisterItem,
+    activeIndex,
+    setActiveIndex,
+    setValue,
+    closeAndFocusTrigger,
+    value: selected,
+  } = useSelect()
 
   const id = React.useId()
   const ref = React.useRef<HTMLDivElement | null>(null)
-  const label = React.useMemo(() => (typeof children === 'string' ? children : String(value)), [children, value])
+  const label = React.useMemo(
+    () => (typeof children === 'string' ? children : String(value)),
+    [children, value],
+  )
 
   React.useEffect(() => {
     registerItem({ id, value, label, disabled, ref })
@@ -611,14 +647,14 @@ const SelectMessage = ({ className, ...props }: React.HTMLAttributes<HTMLParagra
 SelectMessage.displayName = 'SelectMessage'
 
 export {
+  SelectContent,
+  SelectDescription,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectMessage,
   SelectRoot,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
-  SelectContent,
-  SelectGroup,
-  SelectLabel,
-  SelectItem,
-  SelectSeparator,
-  SelectDescription,
-  SelectMessage,
 }

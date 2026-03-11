@@ -237,6 +237,39 @@ export type Database = {
           },
         ]
       }
+      payment_methods: {
+        Row: {
+          id: string
+          user_id: string
+          type: 'card' | 'account'
+          name: string
+          last_four: string
+          bank_name: string
+          is_default: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          type: 'card' | 'account'
+          name: string
+          last_four: string
+          bank_name: string
+          is_default?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          type?: 'card' | 'account'
+          name?: string
+          last_four?: string
+          bank_name?: string
+          is_default?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           auto_allowance_amount: number | null
