@@ -13,7 +13,7 @@ const CreateTransactionBodySchema = z.object({
   createdAt: z.string().datetime().optional(),
   endDate: z.string().datetime().optional(),
   paymentMethodId: z.string().uuid().optional(),
-  // TODO: "내용" 컬럼 테이블 반영 후 추가 예정
+  description: z.string().max(500).optional(),
 })
 
 export async function POST(request: Request) {
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     created_at: body.createdAt,
     end_date: body.endDate ?? null,
     payment_method_id: body.paymentMethodId ?? null,
-    // TODO: "내용" 컬럼 테이블 반영 후 추가 예정
+    description: body.description ?? null,
   }
 
   // insert

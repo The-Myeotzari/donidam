@@ -361,6 +361,7 @@ export type Database = {
           amount: number
           category: Database['public']['Enums']['transaction_category']
           created_at: string
+          description: string | null
           end_date: string | null
           id: number
           is_fixed: boolean
@@ -373,6 +374,7 @@ export type Database = {
           amount: number
           category: Database['public']['Enums']['transaction_category']
           created_at?: string
+          description?: string | null
           end_date?: string | null
           id?: number
           is_fixed?: boolean
@@ -385,6 +387,7 @@ export type Database = {
           amount?: number
           category?: Database['public']['Enums']['transaction_category']
           created_at?: string
+          description?: string | null
           end_date?: string | null
           id?: number
           is_fixed?: boolean
