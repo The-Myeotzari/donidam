@@ -1,13 +1,16 @@
 'use client'
 
 import { useInfiniteTransactionsQuery } from '@/entities/transaction/api/transaction.queries'
+import type { TransactionItem } from '@/entities/transaction/model/transaction.type'
 import type { TransactionListParams } from '@/entities/transaction/model/transaction.type'
-import { TransactionItem } from '@/entities/transaction/ui/TransactionItem'
+import { SwipeableTransactionItem } from '@/entities/transaction/ui/SwipeableTransactionItem'
+import { DeleteTransactionModal } from '@/features/delete-transaction/ui/DeleteTransactionModal'
+import { EditTransactionModal } from '@/features/edit-transaction/ui/EditTransactionModal'
 import { ActiveFilterChips } from '@/features/transaction-filter/ui/ActiveFilterChips'
 import { SummaryCards } from '@/widgets/transaction-list/ui/SummaryCards'
 import { TypeTabs } from '@/widgets/transaction-list/ui/TypeTabs'
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 // 거래 목록
 export function TransactionList() {
@@ -29,6 +32,9 @@ export function TransactionList() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteTransactionsQuery(queryParams)
+
+  const [editItem, setEditItem] = useState<TransactionItem | null>(null)
+  const [deleteId, setDeleteId] = useState<number | null>(null)
 
   // 총 수입/지출 합산
   const allItems = data?.pages.flatMap((p) => p.items) ?? []
@@ -88,7 +94,12 @@ export function TransactionList() {
         ) : (
           <ul>
             {allItems.map((item) => (
-              <TransactionItem key={item.id} item={item} />
+              <SwipeableTransactionItem
+                key={item.id}
+                item={item}
+                onEdit={setEditItem}
+                onDelete={setDeleteId}
+              />
             ))}
           </ul>
         )}
@@ -105,6 +116,9 @@ export function TransactionList() {
           )}
         </div>
       </div>
+
+      <EditTransactionModal item={editItem} onClose={() => setEditItem(null)} />
+      <DeleteTransactionModal transactionId={deleteId} onClose={() => setDeleteId(null)} />
     </div>
   )
 }
