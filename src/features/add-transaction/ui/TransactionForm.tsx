@@ -74,7 +74,7 @@ const FORM_CONFIG: Record<TransactionFormType, TransactionFormConfig> = {
   },
 }
 
-const initialForm = (): SharedFormState => ({
+const defaultForm = (): SharedFormState => ({
   amount: '',
   category: null,
   description: '',
@@ -89,10 +89,14 @@ interface TransactionFormProps {
   type: TransactionFormType
   formId: string
   onSubmitData: (payload: CreateExpensePayload | CreateIncomePayload) => void
+  initialValues?: Partial<SharedFormState>
 }
 
-export function TransactionForm({ type, formId, onSubmitData }: TransactionFormProps) {
-  const [form, setForm] = useState<SharedFormState>(initialForm)
+export function TransactionForm({ type, formId, onSubmitData, initialValues }: TransactionFormProps) {
+  const [form, setForm] = useState<SharedFormState>(() => ({
+    ...defaultForm(),
+    ...initialValues,
+  }))
   const [showNoPaymentModal, setShowNoPaymentModal] = useState(false)
   const { data: paymentMethods = [] } = usePaymentMethods()
 
