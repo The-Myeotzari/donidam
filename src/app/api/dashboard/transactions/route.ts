@@ -12,7 +12,7 @@ const CreateTransactionBodySchema = z.object({
   isFixed: z.boolean(),
   createdAt: z.string().datetime().optional(),
   endDate: z.string().datetime().optional(),
-  // TODO: "거래 계좌내용" 테이블 반영 후 account 관련 컬럼 추가 예정
+  paymentMethodId: z.string().uuid().optional(),
   // TODO: "내용" 컬럼 테이블 반영 후 추가 예정
 })
 
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     is_fixed: body.isFixed,
     created_at: body.createdAt,
     end_date: body.endDate ?? null,
-    // TODO: "거래 계좌내용" 테이블 반영 후 account 관련 컬럼 추가 예정
+    payment_method_id: body.paymentMethodId ?? null,
     // TODO: "내용" 컬럼 테이블 반영 후 추가 예정
   }
 

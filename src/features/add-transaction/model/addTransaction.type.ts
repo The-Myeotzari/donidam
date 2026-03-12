@@ -13,6 +13,8 @@ export type CreateExpensePayload = {
   isFixed: boolean
   createdAt?: string
   endDate?: string
+  paymentMethodId?: string
+  description?: string
 }
 
 // ── 수입 요청 타입 ──────────────────────────────────────────────────────────────
@@ -23,6 +25,8 @@ export type CreateIncomePayload = {
   isFixed: boolean
   createdAt?: string
   endDate?: string
+  paymentMethodId?: string
+  description?: string
 }
 
 // ── 지출 폼 상태 ────────────────────────────────────────────────────────────────
@@ -33,6 +37,7 @@ export type FormState = {
   isFixed: boolean
   date: string
   endDate: string
+  paymentMethodId: string
 }
 
 // ── 수입 폼 상태 ────────────────────────────────────────────────────────────────
@@ -43,4 +48,5 @@ export type IncomeFormState = {
   isFixed: boolean
   date: string
   endDate: string
+  paymentMethodId: string
 }
