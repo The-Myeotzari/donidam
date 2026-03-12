@@ -3,6 +3,7 @@ import type {
   CreateIncomePayload,
   IncomeFormState,
 } from '@/features/add-transaction/model/addTransaction.type'
+import { usePaymentMethods } from '@/entities/payment-method/api/usePaymentMethods'
 import {
   INCOME_CATEGORIES,
   INCOME_CATEGORY_ICON,
@@ -11,6 +12,13 @@ import {
 } from '@/shared/constants/transactionCategory'
 import cn from '@/shared/lib/cn'
 import { Input } from '@/shared/ui/Input'
+import {
+  SelectContent,
+  SelectItem,
+  SelectRoot,
+  SelectTrigger,
+  SelectValue,
+} from '@/shared/ui/Select'
 import { Toggle } from '@/shared/ui/Toggle'
 import { useState } from 'react'
 
@@ -23,6 +31,7 @@ const initialForm = (): IncomeFormState => ({
   isFixed: false,
   date: new Date().toISOString().split('T')[0],
   endDate: '',
+  paymentMethodId: '',
 })
 
 interface AddIncomeFormProps {
@@ -31,6 +40,7 @@ interface AddIncomeFormProps {
 
 export function AddIncomeForm({ onSubmitData }: AddIncomeFormProps) {
   const [form, setForm] = useState<IncomeFormState>(initialForm)
+  const { data: paymentMethods = [] } = usePaymentMethods()
 
   const set = <K extends keyof IncomeFormState>(key: K, value: IncomeFormState[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -48,6 +58,8 @@ export function AddIncomeForm({ onSubmitData }: AddIncomeFormProps) {
       isFixed: form.isFixed,
       createdAt: toISODateTime(form.date),
       endDate: form.isFixed && form.endDate ? toISODateTime(form.endDate) : undefined,
+      paymentMethodId: form.paymentMethodId || undefined,
+      description: form.description || undefined,
     })
   }
 
@@ -162,15 +174,31 @@ export function AddIncomeForm({ onSubmitData }: AddIncomeFormProps) {
         </div>
       )}
 
-      {/* 거래 계좌 */}
+      {/* 거래 수단 */}
       <div className="space-y-1.5">
-        <label className="text-sm font-medium flex items-center gap-1.5">
-          거래 계좌
-          <span className="text-xs text-muted-foreground font-normal">(추후 분리 예정)</span>
-        </label>
-        <Input>
-          <Input.Field placeholder="계좌를 선택해 주세요" disabled />
-        </Input>
+        <label className="text-sm font-medium">거래 수단</label>
+        {paymentMethods.length === 0 ? (
+          <Input>
+            <Input.Field placeholder="등록된 결제 수단이 없습니다" disabled />
+          </Input>
+        ) : (
+          <SelectRoot
+            value={form.paymentMethodId}
+            onValueChange={(v) => set('paymentMethodId', v)}
+            placeholder="결제 수단을 선택해 주세요"
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {paymentMethods.map((pm) => (
+                <SelectItem key={pm.id} value={pm.id}>
+                  {pm.name} ({pm.bank_name} ****{pm.last_four})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </SelectRoot>
+        )}
       </div>
     </form>
   )
