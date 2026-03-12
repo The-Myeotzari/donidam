@@ -1,9 +1,13 @@
 'use client'
 
 import { useRecentTransactionsQuery } from '@/entities/transaction/api/transaction.queries'
-import { TransactionItem } from '@/entities/transaction/ui/TransactionItem'
+import type { TransactionItem } from '@/entities/transaction/model/transaction.type'
+import { SwipeableTransactionItem } from '@/entities/transaction/ui/SwipeableTransactionItem'
+import { DeleteTransactionModal } from '@/features/delete-transaction/ui/DeleteTransactionModal'
+import { EditTransactionModal } from '@/features/edit-transaction/ui/EditTransactionModal'
 import { ROUTES } from '@/shared/constants/route'
 import Link from 'next/link'
+import { useState } from 'react'
 
 const RECENT_LIMIT = 5
 
@@ -13,6 +17,8 @@ type Props = {
 
 export function RecentTransactions({ limit = RECENT_LIMIT }: Props) {
   const { data } = useRecentTransactionsQuery(limit)
+  const [editItem, setEditItem] = useState<TransactionItem | null>(null)
+  const [deleteId, setDeleteId] = useState<number | null>(null)
 
   if (!data) return null
 
@@ -35,10 +41,18 @@ export function RecentTransactions({ limit = RECENT_LIMIT }: Props) {
       ) : (
         <ul>
           {data.items.map((item) => (
-            <TransactionItem key={item.id} item={item} />
+            <SwipeableTransactionItem
+              key={item.id}
+              item={item}
+              onEdit={setEditItem}
+              onDelete={setDeleteId}
+            />
           ))}
         </ul>
       )}
+
+      <EditTransactionModal item={editItem} onClose={() => setEditItem(null)} />
+      <DeleteTransactionModal transactionId={deleteId} onClose={() => setDeleteId(null)} />
     </section>
   )
 }
