@@ -9,6 +9,9 @@ export const TransactionItemSchema = z.object({
   isFixed: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string().optional(),
+  endDate: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
+  paymentMethodId: z.string().nullable().optional(),
 })
 
 export const TransactionsResponseSchema = z

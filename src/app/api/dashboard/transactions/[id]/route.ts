@@ -1,4 +1,4 @@
-import { EXPENSE_CATEGORIES, ExpenseCategory } from '@/shared/constants/transactionCategory'
+import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/shared/constants/transactionCategory'
 import { apiError } from '@/shared/lib/api/apiError'
 import { getUser } from '@/shared/lib/api/getUser'
 import { NextResponse } from 'next/server'
@@ -22,7 +22,7 @@ export async function GET(request: Request, context: RouteContext) {
 
   const { data, error } = await supabase
     .from('transactions')
-    .select('id, type, category, amount, is_fixed, created_at, updated_at')
+    .select('id, type, category, amount, is_fixed, created_at, updated_at, end_date, description, payment_method_id')
     .eq('id', id)
     .eq('user_id', user.id)
     .single()
@@ -45,19 +45,32 @@ export async function GET(request: Request, context: RouteContext) {
       isFixed: data.is_fixed,
       createdAt: data.created_at,
       updatedAt: data.updated_at,
+      endDate: data.end_date,
+      description: data.description,
+      paymentMethodId: data.payment_method_id,
     },
   })
 }
 
 const UpdateTransactionBodySchema = z
   .object({
-    category: z.enum(EXPENSE_CATEGORIES).optional(),
+    category: z.union([z.enum(EXPENSE_CATEGORIES), z.enum(INCOME_CATEGORIES)]).optional(),
     amount: z.number().int().min(0).optional(),
     isFixed: z.boolean().optional(),
+    createdAt: z.string().datetime().optional(),
+    endDate: z.string().datetime().nullable().optional(),
+    paymentMethodId: z.string().uuid().nullable().optional(),
+    description: z.string().max(500).nullable().optional(),
   })
   .refine(
     (data) =>
-      data.category !== undefined || data.amount !== undefined || data.isFixed !== undefined,
+      data.category !== undefined ||
+      data.amount !== undefined ||
+      data.isFixed !== undefined ||
+      data.createdAt !== undefined ||
+      data.endDate !== undefined ||
+      data.paymentMethodId !== undefined ||
+      data.description !== undefined,
     {
       message: 'At least one field must be provided',
     },
@@ -96,18 +109,20 @@ export async function PATCH(request: Request, context: RouteContext) {
     updated_at: new Date().toISOString(),
   }
 
-  if (body.category) updatePayload.category = body.category as ExpenseCategory
-
+  if (body.category !== undefined) updatePayload.category = body.category
   if (body.amount !== undefined) updatePayload.amount = body.amount
-
   if (body.isFixed !== undefined) updatePayload.is_fixed = body.isFixed
+  if (body.createdAt !== undefined) updatePayload.created_at = body.createdAt
+  if (body.endDate !== undefined) updatePayload.end_date = body.endDate
+  if (body.paymentMethodId !== undefined) updatePayload.payment_method_id = body.paymentMethodId
+  if (body.description !== undefined) updatePayload.description = body.description
 
   const { data, error } = await supabase
     .from('transactions')
     .update(updatePayload)
     .eq('id', id)
     .eq('user_id', user.id)
-    .select('id, type, category, amount, is_fixed, created_at, updated_at')
+    .select('id, type, category, amount, is_fixed, created_at, updated_at, end_date, description, payment_method_id')
     .single()
 
   if (error) {
@@ -128,6 +143,9 @@ export async function PATCH(request: Request, context: RouteContext) {
       isFixed: data.is_fixed,
       createdAt: data.created_at,
       updatedAt: data.updated_at,
+      endDate: data.end_date,
+      description: data.description,
+      paymentMethodId: data.payment_method_id,
     },
   })
 }

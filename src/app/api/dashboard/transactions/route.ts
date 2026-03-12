@@ -173,7 +173,7 @@ export async function GET(request: Request) {
 
   let query = supabase
     .from('transactions')
-    .select('id,type,category,amount,is_fixed,created_at,updated_at')
+    .select('id,type,category,amount,is_fixed,created_at,updated_at,end_date,description,payment_method_id')
 
   if (type) query = query.eq('type', type as TransactionType)
   if (isFixed !== undefined) query = query.eq('is_fixed', isFixed)
@@ -257,6 +257,9 @@ export async function GET(request: Request) {
         isFixed: row.is_fixed,
         createdAt: row.created_at,
         updatedAt: row.updated_at,
+        endDate: row.end_date,
+        description: row.description,
+        paymentMethodId: row.payment_method_id,
       })),
       page: {
         nextCursor,
