@@ -67,9 +67,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </span>
           }
           subtitle={
-            <span className="text-2xl font-bold mt-0.5 text-accent-foreground">
-              {config.subtitle}
-            </span>
+            <span className="text-2xl font-bold mt-0.5 text-(--foreground)">{config.subtitle}</span>
           }
           right={
             config.right && (
