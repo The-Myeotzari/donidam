@@ -18,7 +18,7 @@ export async function GET(request: Request) {
     .order('created_at', { ascending: false })
 
   if (status && status !== 'ALL') {
-    query = query.eq('status', status)
+    query = query.eq('status', status as 'IN_PROGRESS' | 'ACHIEVED' | 'COMPLETED' | 'PENDING_APPROVAL' | 'FAILED' | 'CANCELED' | 'APPROVED')
   }
 
   const { data, error } = await query
