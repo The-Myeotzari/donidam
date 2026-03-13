@@ -12,8 +12,8 @@ const CreateTransactionBodySchema = z.object({
   isFixed: z.boolean(),
   createdAt: z.string().datetime().optional(),
   endDate: z.string().datetime().optional(),
-  // TODO: "거래 계좌내용" 테이블 반영 후 account 관련 컬럼 추가 예정
-  // TODO: "내용" 컬럼 테이블 반영 후 추가 예정
+  paymentMethodId: z.string().uuid().optional(),
+  description: z.string().max(500).optional(),
 })
 
 export async function POST(request: Request) {
@@ -47,8 +47,8 @@ export async function POST(request: Request) {
     is_fixed: body.isFixed,
     created_at: body.createdAt,
     end_date: body.endDate ?? null,
-    // TODO: "거래 계좌내용" 테이블 반영 후 account 관련 컬럼 추가 예정
-    // TODO: "내용" 컬럼 테이블 반영 후 추가 예정
+    payment_method_id: body.paymentMethodId ?? null,
+    description: body.description ?? null,
   }
 
   // insert
@@ -173,7 +173,7 @@ export async function GET(request: Request) {
 
   let query = supabase
     .from('transactions')
-    .select('id,type,category,amount,is_fixed,created_at,updated_at')
+    .select('id,type,category,amount,is_fixed,created_at,updated_at,end_date,description,payment_method_id')
 
   if (type) query = query.eq('type', type as TransactionType)
   if (isFixed !== undefined) query = query.eq('is_fixed', isFixed)
@@ -257,6 +257,9 @@ export async function GET(request: Request) {
         isFixed: row.is_fixed,
         createdAt: row.created_at,
         updatedAt: row.updated_at,
+        endDate: row.end_date,
+        description: row.description,
+        paymentMethodId: row.payment_method_id,
       })),
       page: {
         nextCursor,

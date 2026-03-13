@@ -20,6 +20,7 @@ function useAddTransactionMutation() {
     mutationFn: createTransaction,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.DASHBOARD.all })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TRANSACTIONS.all })
     },
   })
 }

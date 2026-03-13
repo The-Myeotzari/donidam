@@ -361,9 +361,11 @@ export type Database = {
           amount: number
           category: Database['public']['Enums']['transaction_category']
           created_at: string
+          description: string | null
           end_date: string | null
           id: number
           is_fixed: boolean
+          payment_method_id: string | null
           type: Database['public']['Enums']['tx_type']
           updated_at: string
           user_id: string
@@ -372,9 +374,11 @@ export type Database = {
           amount: number
           category: Database['public']['Enums']['transaction_category']
           created_at?: string
+          description?: string | null
           end_date?: string | null
           id?: number
           is_fixed?: boolean
+          payment_method_id?: string | null
           type: Database['public']['Enums']['tx_type']
           updated_at?: string
           user_id: string
@@ -383,9 +387,11 @@ export type Database = {
           amount?: number
           category?: Database['public']['Enums']['transaction_category']
           created_at?: string
+          description?: string | null
           end_date?: string | null
           id?: number
           is_fixed?: boolean
+          payment_method_id?: string | null
           type?: Database['public']['Enums']['tx_type']
           updated_at?: string
           user_id?: string
