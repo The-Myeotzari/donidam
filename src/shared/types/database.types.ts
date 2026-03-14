@@ -8,6 +8,81 @@ export type Database = {
   }
   public: {
     Tables: {
+      notification_preferences: {
+        Row: {
+          user_id: string
+          push_enabled: boolean
+          email_enabled: boolean
+          budget_control_enabled: boolean
+          stats_insight_enabled: boolean
+          retention_enabled: boolean
+          dukdam_enabled: boolean
+          nodam_enabled: boolean
+          notification_mode: 'nag' | 'cheer' | 'balanced'
+          quiet_start: string
+          quiet_end: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          user_id: string
+          push_enabled?: boolean
+          email_enabled?: boolean
+          budget_control_enabled?: boolean
+          stats_insight_enabled?: boolean
+          retention_enabled?: boolean
+          dukdam_enabled?: boolean
+          nodam_enabled?: boolean
+          notification_mode?: 'nag' | 'cheer' | 'balanced'
+          quiet_start?: string
+          quiet_end?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          user_id?: string
+          push_enabled?: boolean
+          email_enabled?: boolean
+          budget_control_enabled?: boolean
+          stats_insight_enabled?: boolean
+          retention_enabled?: boolean
+          dukdam_enabled?: boolean
+          nodam_enabled?: boolean
+          notification_mode?: 'nag' | 'cheer' | 'balanced'
+          quiet_start?: string
+          quiet_end?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      push_subscriptions: {
+        Row: {
+          id: string
+          user_id: string
+          endpoint: string
+          p256dh: string
+          auth: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          endpoint: string
+          p256dh: string
+          auth: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          endpoint?: string
+          p256dh?: string
+          auth?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
       allowances: {
         Row: {
           amount: number
