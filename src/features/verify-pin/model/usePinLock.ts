@@ -23,6 +23,10 @@ export function usePinLock() {
       .then((hasPin) => {
         if (hasPin) setLocked(true)
       })
+      .catch(() => {
+        // API 오류 시 안전하게 잠금 처리
+        setLocked(true)
+      })
       .finally(() => setChecking(false))
   }, [])
 
