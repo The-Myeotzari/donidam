@@ -21,7 +21,7 @@ export default function ParentInvitePage() {
 
     connect(email.trim(), {
       onSuccess: () => {
-        router.push(ROUTES.deokdamParentDone)
+        router.replace(ROUTES.deokdamParentDone)
       },
       onError: (err) => {
         if (isApiRequestError(err)) {
