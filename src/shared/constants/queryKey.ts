@@ -28,4 +28,16 @@ export const QUERY_KEYS = {
     all: ['payment-methods'] as const,
     list: () => ['payment-methods', 'list'] as const,
   },
+
+  DEOKDAM: {
+    all: ['deokdam'] as const,
+    parentSummary: (month?: string) => ['deokdam', 'parent', 'summary', month ?? 'current'] as const,
+    parentPromises: (status?: string) => ['deokdam', 'parent', 'promises', status ?? 'ALL'] as const,
+    parentAllowances: (type?: string) => ['deokdam', 'parent', 'allowances', type ?? 'all'] as const,
+    autoSettings: ['deokdam', 'parent', 'auto-settings'] as const,
+    children: ['deokdam', 'parent', 'children'] as const,
+    childSummary: (month?: string) => ['deokdam', 'child', 'summary', month ?? 'current'] as const,
+    childPromises: (status?: string) => ['deokdam', 'child', 'promises', status ?? 'ALL'] as const,
+    childAllowances: (type?: string) => ['deokdam', 'child', 'allowances', type ?? 'all'] as const,
+  },
 }
