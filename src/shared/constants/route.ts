@@ -1,5 +1,6 @@
 export const ROUTES = {
   auth: '/auth',
+  setupPin: '/auth/setup-pin',
 
   dashboard: '/',
   dashboardMonthly: '/monthly-expenses',
