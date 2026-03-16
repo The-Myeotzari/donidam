@@ -46,7 +46,7 @@ export function SetupPinForm() {
 
       {/* 키패드 */}
       <div className="grid grid-cols-3 gap-4 w-full max-w-xs">
-        {KEYPAD.map((key, idx) => {
+        {KEYPAD.map((key) => {
           if (key === '') return <div key="empty" />
           if (key === 'del') {
             return (

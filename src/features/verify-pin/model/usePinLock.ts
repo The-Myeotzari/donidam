@@ -6,19 +6,18 @@ import { checkHasPin, verifyPinApi } from '../api/verifyPin'
 const SESSION_KEY = 'pin_unlocked'
 
 export function usePinLock() {
-  const [locked, setLocked] = useState(false) // 초기에는 잠금 아님 (로딩 중에도 화면 안 막음)
-  const [checking, setChecking] = useState(true)
+  const [locked, setLocked] = useState(false)
+  // sessionStorage 확인은 클라이언트에서만 가능 → lazy initializer로 초기값 결정
+  const [checking, setChecking] = useState(
+    () => typeof window === 'undefined' || sessionStorage.getItem(SESSION_KEY) !== 'true',
+  )
   const [digits, setDigits] = useState<string[]>([])
   const [error, setError] = useState('')
   const [isVerifying, setIsVerifying] = useState(false)
 
-  // 앱 진입 시 PIN 필요 여부 확인
+  // checking=true일 때만 PIN 설정 여부 조회 (세션 미인증 상태)
   useEffect(() => {
-    const alreadyUnlocked = sessionStorage.getItem(SESSION_KEY) === 'true'
-    if (alreadyUnlocked) {
-      setChecking(false)
-      return
-    }
+    if (!checking) return
     checkHasPin()
       .then((hasPin) => {
         if (hasPin) setLocked(true)
@@ -28,7 +27,7 @@ export function usePinLock() {
         setLocked(true)
       })
       .finally(() => setChecking(false))
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDigit = async (digit: string) => {
     if (isVerifying || digits.length >= 4) return

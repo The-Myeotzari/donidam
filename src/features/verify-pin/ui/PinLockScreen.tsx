@@ -44,7 +44,7 @@ export function PinLockScreen({ children }: { children: React.ReactNode }) {
 
           {/* 키패드 */}
           <div className="grid grid-cols-3 gap-4 w-full">
-            {KEYPAD.map((key, idx) => {
+            {KEYPAD.map((key) => {
               if (key === '') {
                 return <div key="empty" />
               }
