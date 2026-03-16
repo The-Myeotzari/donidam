@@ -11,6 +11,7 @@ export type HeaderConfig = {
 export const HEADER_ROUTES: HeaderConfig[] = [
   // auth
   { pattern: ROUTES.auth, hide: true },
+  { pattern: ROUTES.setupPin, hide: true },
 
   // (main) dashboard
   { pattern: ROUTES.dashboard },
