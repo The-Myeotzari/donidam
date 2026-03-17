@@ -1,6 +1,8 @@
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/shared/constants/transactionCategory'
 import { apiError } from '@/shared/lib/api/apiError'
 import { getUser } from '@/shared/lib/api/getUser'
+import { buildBudgetPayload } from '@/shared/lib/notification/conditions'
+import { sendNotificationToUser } from '@/shared/lib/notification/sender'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -60,6 +62,15 @@ export async function POST(request: Request) {
 
   if (error) {
     return apiError(request, 'INTERNAL_SERVER_ERROR', 500, error.message)
+  }
+
+  // 지출 등록 직후 예산 알림 판단 (fire-and-forget)
+  if (body.type === 'OUT') {
+    buildBudgetPayload(user.id)
+      .then((payload) => {
+        if (payload) sendNotificationToUser(user.id, 'budget', payload)
+      })
+      .catch(() => {})
   }
 
   return NextResponse.json({
