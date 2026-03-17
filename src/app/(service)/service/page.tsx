@@ -10,8 +10,7 @@ export default function ServicePage() {
           icon="🎁"
           title="덕담"
           description="가족과 함께 용돈을 주고 받아요"
-          // 덕담 개발에 맞춰서 수정 필요
-          href={ROUTES.deokdamOnboarding}
+          href={ROUTES.deokdam}
           iconClassName="bg-linear-to-br from-pink-500 to-rose-400"
         />
         <MenuCardItem

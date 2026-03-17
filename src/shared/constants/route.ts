@@ -24,6 +24,7 @@ export const ROUTES = {
 
   service: '/service',
 
+  deokdam: '/deokdam',
   deokdamOnboarding: '/deokdam/onboarding',
   deokdamParentInvite: '/deokdam/onboarding/parent/invite',
   deokdamParentDone: '/deokdam/onboarding/parent/done',
