@@ -20,7 +20,7 @@ export default function ChildAcceptPage() {
     setError(null)
 
     accept(email.trim(), {
-      onSuccess: () => router.push(ROUTES.deokdamChildDone),
+      onSuccess: () => router.replace(ROUTES.deokdamChildDone),
       onError: (err) => {
         if (isApiRequestError(err)) {
           setError(err.data.detail)

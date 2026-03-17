@@ -20,6 +20,8 @@ export default function DeokdamEntryPage() {
   const { data } = useQuery({
     queryKey: ['deokdam', 'status'],
     queryFn: () => Api.get('/deokdam/status', StatusSchema),
+    staleTime: 0,
+    gcTime: 0,
   })
 
   useEffect(() => {
