@@ -16,9 +16,9 @@ export default function DeokdamOnboardingPage() {
   const handleNext = () => {
     if (!selected) return
     if (selected === 'parent') {
-      router.push(ROUTES.deokdamParentInvite)
+      router.replace(ROUTES.deokdamParentInvite)
     } else {
-      router.push(ROUTES.deokdamChildAccept)
+      router.replace(ROUTES.deokdamChildAccept)
     }
   }
 
