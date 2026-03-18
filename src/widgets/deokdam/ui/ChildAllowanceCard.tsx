@@ -33,7 +33,7 @@ export function ChildAllowanceCard({ item }: Props) {
 
       {item.message && (
         <div className="mt-3 rounded-xl bg-muted px-3 py-2">
-          <p className="text-xs text-foreground">"{item.message}"</p>
+          <p className="text-xs text-foreground">&ldquo;{item.message}&rdquo;</p>
         </div>
       )}
     </div>
