@@ -76,7 +76,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           }
         />
       )}
-      <main className="px-4 pb-4">{children}</main>
+      <main className="px-4 pb-24">{children}</main>
       <BottomNav />
     </>
   )

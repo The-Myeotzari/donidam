@@ -28,7 +28,7 @@ function AutoFillLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Header right={isAccountDetail ? <ManageButton /> : undefined} />
-      <main className="px-4 pb-4">{children}</main>
+      <main className="px-4 pb-24">{children}</main>
     </>
   )
 }
