@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "today.donidam.twa",
+    "sha256_cert_fingerprints": ["7B:00:FE:3F:41:78:26:B0:21:54:95:12:AA:98:5A:95:FD:A8:5D:9D:59:41:96:15:ED:6E:0C:AB:5E:A0:43:6E"]
+  }
+}]
