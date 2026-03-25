@@ -17,9 +17,9 @@ export default function ServicePage() {
           icon={'🚭'}
           title="노담"
           description="금연으로 절약한 금액을 확인해요"
-          // 덕담 개발에 맞춰서 수정 필요
           href={ROUTES.nodamOnboarding}
           iconClassName="bg-linear-to-br from-emerald-500 to-teal-400"
+          disabled
         />
       </div>
 
