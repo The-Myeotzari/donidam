@@ -56,6 +56,32 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_history: {
+        Row: {
+          id: string
+          user_id: string
+          type: string
+          title: string
+          body: string
+          deep_link: string
+          is_read: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          type: string
+          title: string
+          body: string
+          deep_link?: string
+          is_read?: boolean
+          created_at?: string
+        }
+        Update: {
+          is_read?: boolean
+        }
+        Relationships: []
+      }
       push_subscriptions: {
         Row: {
           id: string

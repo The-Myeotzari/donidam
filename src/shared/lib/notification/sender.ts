@@ -68,6 +68,15 @@ export async function sendNotificationToUser(
   await Promise.allSettled(
     subscriptions.map((sub) => sendPushNotification(sub, payload)),
   )
+
+  // 알림 히스토리 저장
+  await supabase.from('notification_history').insert({
+    user_id: userId,
+    type,
+    title: payload.title,
+    body: payload.body,
+    deep_link: payload.deepLink ?? '/',
+  })
 }
 
 /**
