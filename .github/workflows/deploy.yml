@@ -1,0 +1,77 @@
+name: EC2 Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # CI (Build Check)
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint check
+        run: npm run lint
+
+      - name: Build project
+        run: npm run build
+
+  # CD (Deploy to EC2)
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no \
+          ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
+          
+            set -e
+          
+            cd /home/ubuntu/donidam
+          
+            echo "📥 Pull latest code"
+            git pull origin main
+          
+            echo "🧹 Clean old dependencies"
+            rm -rf node_modules
+            rm -rf .next
+          
+            echo "📦 Install dependencies"
+            npm ci
+          
+            echo "🏗 Build project"
+            npm run build
+          
+            echo "🚀 Start or Restart PM2"
+          
+            if pm2 describe app > /dev/null; then
+              pm2 restart app
+            else
+              pm2 start npm --name "app" -- start
+            fi
+          
+            pm2 save
+          
+            echo "✅ Deploy completed"
+          
+          EOF
