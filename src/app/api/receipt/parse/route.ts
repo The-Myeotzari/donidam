@@ -59,9 +59,12 @@ export async function POST(req: NextRequest) {
   const text = message.content[0].type === 'text' ? message.content[0].text : ''
 
   try {
-    const json = JSON.parse(text.trim())
+    const match = text.match(/\{[\s\S]*?\}/)
+    if (!match) throw new Error('no json found')
+    const json = JSON.parse(match[0])
     return NextResponse.json(json)
   } catch {
+    console.error('Receipt parse failed. Raw response:', text)
     return NextResponse.json({ error: '영수증을 인식하지 못했습니다.' }, { status: 422 })
   }
 }
