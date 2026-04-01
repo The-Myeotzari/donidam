@@ -3,7 +3,7 @@ import React from 'react'
 import cn from '@/shared/lib/cn'
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'dashed'
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'dashed' | 'white'
   size?: 'sm' | 'md' | 'lg' | 'xl'
   fullWidth?: boolean
   leftIcon?: React.ReactNode
@@ -53,6 +53,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             'hover:bg-muted': variant === 'ghost',
             'border-2 border-dashed border-border bg-transparent text-muted-foreground hover:border-primary hover:text-primary':
               variant === 'dashed',
+            'bg-white text-black hover:bg-white/90' : variant === 'white',
           },
           {
             'h-8 px-3 text-xs rounded-lg': size === 'sm',

@@ -2,6 +2,7 @@
 
 import NodamCheck from "@/widgets/nodam/ui/NodamCheck";
 import NodamStart from "@/widgets/nodam/ui/NodamStart";
+import { Header } from '@/shared/layout/header/Header'
 import { useState } from "react";
 
 export default function Page () {
@@ -9,6 +10,7 @@ export default function Page () {
 
   return (
     <>
+      <Header back={true} title={'노담 시작하기'} subtitle={"담배 끊고, 돈도 모으고!"} />
       {
         step === 1 ? (
           <>
