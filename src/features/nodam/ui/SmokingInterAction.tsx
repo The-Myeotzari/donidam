@@ -1,4 +1,6 @@
 import {Button} from "@/shared/ui/Button";
+import Link from 'next/link'
+import {ROUTES} from "@/shared/constants/route";
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>
@@ -15,7 +17,7 @@ export default function SmokingInterAction({setStep}: Props) {
       >
         이전
       </Button>
-      <Button size={"xl"} fullWidth={true}>금연 시작하기 🚀</Button>
+      <Button size={"xl"} fullWidth={true}><Link href={ROUTES.nodamHome}>금연 시작하기 🚀</Link></Button>
     </div>
   )
 }

@@ -19,7 +19,6 @@ export default function ServicePage() {
           description="금연으로 절약한 금액을 확인해요"
           href={ROUTES.nodamOnboarding}
           iconClassName="bg-linear-to-br from-emerald-500 to-teal-400"
-          disabled
         />
       </div>
 
