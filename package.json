@@ -3,24 +3,32 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "next dev --turbopack",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
+    "@serwist/next": "^9.5.7",
     "@supabase-cache-helpers/postgrest-react-query": "^1.13.8",
     "@supabase/ssr": "^0.8.0",
-    "@supabase/supabase-js": "^2.97.0",
+    "@supabase/supabase-js": "^2.98.0",
     "@tanstack/react-query": "^5.90.21",
+    "@types/web-push": "^3.6.4",
+    "chart.js": "^4.5.1",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "lucide-react": "^0.563.0",
     "next": "16.1.6",
     "react": "19.2.3",
+    "react-chartjs-2": "^5.3.1",
     "react-dom": "19.2.3",
-    "tailwind-merge": "^3.4.0"
+    "serwist": "^9.5.7",
+    "tailwind-merge": "^3.4.0",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^5.0.0",

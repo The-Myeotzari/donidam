@@ -13,7 +13,7 @@ export const HEADER_ROUTES: HeaderConfig[] = [
   { pattern: ROUTES.auth, hide: true },
 
   // (main) dashboard
-  { pattern: ROUTES.dashboard, hide: true },
+  { pattern: ROUTES.dashboard },
   {
     pattern: ROUTES.dashboardMonthly,
     title: undefined, // 커스텀 주입
@@ -27,27 +27,11 @@ export const HEADER_ROUTES: HeaderConfig[] = [
     backTo: ROUTES.dashboard,
   },
 
-  // (main) auto-fill
-  {
-    pattern: ROUTES.autoFill,
-    title: '자동 기입',
-    subtitle: '은행 계좌를 연결하고 자동으로 가계부를 작성하세요',
-  },
-  {
-    pattern: ROUTES.autoFillAccountDetail,
-    title: undefined, // 커스텀 주입
-    backTo: ROUTES.autoFill,
-  },
-  {
-    pattern: ROUTES.autoFillAddAccountsDetail,
-    title: '추가하기',
-    backTo: ROUTES.autoFill,
-  },
-  {
-    pattern: ROUTES.autoFillAddAccounts,
-    title: '추가하기',
-    backTo: ROUTES.autoFill,
-  },
+  // TODO: 자동기입 기능 보류 (오픈뱅킹 API 연동 필요)
+  // { pattern: ROUTES.autoFill, title: '자동 기입', subtitle: '은행 계좌를 연결하고 자동으로 가계부를 작성하세요' },
+  // { pattern: ROUTES.autoFillAccountDetail, title: undefined, backTo: ROUTES.autoFill },
+  // { pattern: ROUTES.autoFillAddAccountsDetail, title: '추가하기', backTo: ROUTES.autoFill },
+  // { pattern: ROUTES.autoFillAddAccounts, title: '추가하기', backTo: ROUTES.autoFill },
 
   // (main) calendar
   {
@@ -91,6 +75,12 @@ export const HEADER_ROUTES: HeaderConfig[] = [
     pattern: ROUTES.menuSettingsPassword,
     title: '보안 설정',
     subtitle: '계정 보안을 관리하세요',
+    backTo: ROUTES.menuSettings,
+  },
+  {
+    pattern: ROUTES.menuSettingsCard,
+    title: '결제 수단',
+    subtitle: '카드와 계좌를 관리하세요',
     backTo: ROUTES.menuSettings,
   },
   {

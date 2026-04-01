@@ -32,7 +32,7 @@ export default function Auth() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <Image src="/logo.png" alt="로고" width={120} height={120} />
-      <div className="text-2xl font-bold">덕담</div>
+      <div className="text-2xl font-bold">돈이담</div>
       <Button
         className="bg-[#FEE500] text-black w-72 mt-6"
         leftIcon={<Image src="/kakao.png" alt="kakao" width={20} height={10} />}

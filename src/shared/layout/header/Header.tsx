@@ -37,7 +37,7 @@ export function Header(props: AppHeaderProps) {
   }
 
   return (
-    <header className={cn('sticky top-0 z-50 w-full p-4', props.className ?? '')}>
+    <header className={cn('relative  top-0 z-50 w-full px-4 py-6', props.className ?? '')}>
       <div className={cn('flex items-center', showBack ? 'gap-3' : '')}>
         {/* Left: Back */}
         <div>

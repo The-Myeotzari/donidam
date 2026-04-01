@@ -1,19 +1,21 @@
-import { TRANSACTION_CATEGORIES } from '@/shared/constants/transactionCategory'
+import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/shared/constants/transactionCategory'
 import { apiError } from '@/shared/lib/api/apiError'
 import { getUser } from '@/shared/lib/api/getUser'
+import { buildBudgetPayload } from '@/shared/lib/notification/conditions'
+import { sendNotificationToUser } from '@/shared/lib/notification/sender'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
 // 지출 추가/수입 추가 API =========================================================
 const CreateTransactionBodySchema = z.object({
   type: z.enum(['OUT', 'IN']),
-  category: z.enum(TRANSACTION_CATEGORIES),
+  category: z.union([z.enum(EXPENSE_CATEGORIES), z.enum(INCOME_CATEGORIES)]),
   amount: z.number().int().min(0, 'amount 값은 0 이상'),
   isFixed: z.boolean(),
   createdAt: z.string().datetime().optional(),
   endDate: z.string().datetime().optional(),
-  // TODO: "거래 계좌내용" 테이블 반영 후 account 관련 컬럼 추가 예정
-  // TODO: "내용" 컬럼 테이블 반영 후 추가 예정
+  paymentMethodId: z.string().uuid().optional(),
+  description: z.string().max(500).optional(),
 })
 
 export async function POST(request: Request) {
@@ -46,9 +48,9 @@ export async function POST(request: Request) {
     amount: body.amount,
     is_fixed: body.isFixed,
     created_at: body.createdAt,
-    endDate: body.endDate ?? null,
-    // TODO: "거래 계좌내용" 테이블 반영 후 account 관련 컬럼 추가 예정
-    // TODO: "내용" 컬럼 테이블 반영 후 추가 예정
+    end_date: body.endDate ?? null,
+    payment_method_id: body.paymentMethodId ?? null,
+    description: body.description ?? null,
   }
 
   // insert
@@ -60,6 +62,15 @@ export async function POST(request: Request) {
 
   if (error) {
     return apiError(request, 'INTERNAL_SERVER_ERROR', 500, error.message)
+  }
+
+  // 지출 등록 직후 예산 알림 판단 (fire-and-forget)
+  if (body.type === 'OUT') {
+    buildBudgetPayload(user.id)
+      .then((payload) => {
+        if (payload) sendNotificationToUser(user.id, 'budget', payload)
+      })
+      .catch(() => {})
   }
 
   return NextResponse.json({
@@ -78,7 +89,7 @@ export async function POST(request: Request) {
 
 // 거래 조회 API =========================================================
 type SortOption = 'createdAt:desc' | 'createdAt:asc'
-type TransactionCategory = (typeof TRANSACTION_CATEGORIES)[number]
+type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number]
 
 const DEFAULT_LIMIT = 20
 const MAX_LIMIT = 100
@@ -157,11 +168,9 @@ export async function GET(request: Request) {
     ? categoriesParam
         .split(',')
         .map((c) => c.trim())
-        .filter((c): c is TransactionCategory =>
-          TRANSACTION_CATEGORIES.includes(c as TransactionCategory),
-        )
-    : category && TRANSACTION_CATEGORIES.includes(category as TransactionCategory)
-      ? [category as TransactionCategory]
+        .filter((c): c is ExpenseCategory => EXPENSE_CATEGORIES.includes(c as ExpenseCategory))
+    : category && EXPENSE_CATEGORIES.includes(category as ExpenseCategory)
+      ? [category as ExpenseCategory]
       : undefined
 
   let cursorPayload: { lastId: number; lastCreatedAt: string } | null = null
@@ -175,7 +184,7 @@ export async function GET(request: Request) {
 
   let query = supabase
     .from('transactions')
-    .select('id,type,category,amount,is_fixed,created_at,updated_at')
+    .select('id,type,category,amount,is_fixed,created_at,updated_at,end_date,description,payment_method_id')
 
   if (type) query = query.eq('type', type as TransactionType)
   if (isFixed !== undefined) query = query.eq('is_fixed', isFixed)
@@ -259,6 +268,9 @@ export async function GET(request: Request) {
         isFixed: row.is_fixed,
         createdAt: row.created_at,
         updatedAt: row.updated_at,
+        endDate: row.end_date,
+        description: row.description,
+        paymentMethodId: row.payment_method_id,
       })),
       page: {
         nextCursor,
