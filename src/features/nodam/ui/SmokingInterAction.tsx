@@ -1,12 +1,26 @@
 import {Button} from "@/shared/ui/Button";
 import Link from 'next/link'
+import { useRouter } from "next/navigation";
 import {ROUTES} from "@/shared/constants/route";
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>
+  onStart: () => void
+  isPending: boolean
 }
 
-export default function SmokingInterAction({setStep}: Props) {
+export default function SmokingInterAction({
+    setStep,
+    onStart,
+    isPending
+  }: Props) {
+  const router = useRouter()
+
+  const handleClick = async () => {
+    await onStart()
+    router.push(ROUTES.nodamHome)
+  }
+
   return (
     <div className="grid grid-cols-2 gap-3">
       <Button variant={"outline"}
@@ -17,7 +31,15 @@ export default function SmokingInterAction({setStep}: Props) {
       >
         이전
       </Button>
-      <Button size={"xl"} fullWidth={true} className='hover:bg-emerald-700'><Link href={ROUTES.nodamHome} className="text-[16px]">금연 시작하기 🚀</Link></Button>
+      <Button
+        size={"xl"}
+        fullWidth
+        className="hover:bg-emerald-700 text-[16px]"
+        onClick={handleClick}
+        disabled={isPending}
+      >
+        {isPending ? "저장 중..." : "금연 시작하기 🚀"}
+      </Button>
     </div>
   )
 }
