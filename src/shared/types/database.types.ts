@@ -276,28 +276,25 @@ export type Database = {
       }
       nodam_history: {
         Row: {
-          created_at: string
-          fail_date: string
           id: number
-          start_date: string
-          success_days_count: number
           user_id: string
+          date: string
+          status: 'success' | 'fail'
+          created_at: string
         }
         Insert: {
-          created_at?: string
-          fail_date: string
           id?: number
-          start_date: string
-          success_days_count: number
           user_id: string
+          date: string
+          status: 'success' | 'fail'
+          created_at?: string
         }
         Update: {
-          created_at?: string
-          fail_date?: string
           id?: number
-          start_date?: string
-          success_days_count?: number
           user_id?: string
+          date?: string
+          status?: 'success' | 'fail'
+          created_at?: string
         }
         Relationships: [
           {
