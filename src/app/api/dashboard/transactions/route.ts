@@ -1,4 +1,5 @@
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/shared/constants/transactionCategory'
+import { getRecentTransactions } from '@/entities/transaction/api/transaction.server'
 import { apiError } from '@/shared/lib/api/apiError'
 import { getUser } from '@/shared/lib/api/getUser'
 import { buildBudgetPayload } from '@/shared/lib/notification/conditions'
@@ -182,9 +183,35 @@ export async function GET(request: Request) {
     }
   }
 
+  const isUnfilteredFirstPage =
+    !type &&
+    !categories &&
+    isFixed === undefined &&
+    !from &&
+    !to &&
+    !cursorPayload &&
+    !includeSummary
+
+  if (isUnfilteredFirstPage) {
+    try {
+      const data = await getRecentTransactions(
+        supabase,
+        auth.user.id,
+        limit,
+        sort === 'createdAt:asc',
+      )
+      return NextResponse.json({ ok: true, data })
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : '거래 조회에 실패했습니다.'
+      return apiError(request, 'INTERNAL_SERVER_ERROR', 500, detail)
+    }
+  }
+
   let query = supabase
     .from('transactions')
-    .select('id,type,category,amount,is_fixed,created_at,updated_at,end_date,description,payment_method_id')
+    .select(
+      'id,type,category,amount,is_fixed,created_at,updated_at,end_date,description,payment_method_id',
+    )
 
   if (type) query = query.eq('type', type as TransactionType)
   if (isFixed !== undefined) query = query.eq('is_fixed', isFixed)
