@@ -1,14 +1,35 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { NextRequest, NextResponse } from 'next/server'
+import { validateReceiptValues } from '@/features/receipt-scan/model/receipt.schema'
+import { z } from 'zod'
 
 const client = new Anthropic()
 
-export async function POST(req: NextRequest) {
-  const { image, mediaType } = await req.json()
+const RequestSchema = z.object({
+  image: z.string().min(1),
+  mediaType: z.enum(['image/jpeg', 'image/png', 'image/webp', 'image/gif']),
+})
 
-  if (!image || !mediaType) {
-    return NextResponse.json({ error: '이미지가 없습니다.' }, { status: 400 })
+function getTodayInKorea() {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date())
+  const value = Object.fromEntries(parts.map(({ type, value }) => [type, value]))
+  return `${value.year}-${value.month}-${value.day}`
+}
+
+export async function POST(req: NextRequest) {
+  const body = RequestSchema.safeParse(await req.json().catch(() => null))
+
+  if (!body.success) {
+    return NextResponse.json({ error: '지원하는 영수증 이미지가 필요합니다.' }, { status: 400 })
   }
+
+  const { image, mediaType } = body.data
+  const today = getTodayInKorea()
 
   const message = await client.messages.create({
     model: 'claude-haiku-4-5-20251001',
@@ -48,7 +69,8 @@ export async function POST(req: NextRequest) {
   "date": "YYYY-MM-DD"
 }
 
-날짜가 보이지 않으면 오늘 날짜(${new Date().toISOString().split('T')[0]})를 사용하세요.
+인식할 수 없는 값은 추측하지 말고 null을 사용하세요.
+날짜가 보이지 않으면 null을 사용하세요. 오늘 날짜는 ${today}입니다.
 금액이 여러 개면 합계 금액을 사용하세요.`,
           },
         ],
@@ -61,10 +83,10 @@ export async function POST(req: NextRequest) {
   try {
     const match = text.match(/\{[\s\S]*?\}/)
     if (!match) throw new Error('no json found')
-    const json = JSON.parse(match[0])
-    return NextResponse.json(json)
+    const json: unknown = JSON.parse(match[0])
+    return NextResponse.json(validateReceiptValues(json, today))
   } catch {
     console.error('Receipt parse failed. Raw response:', text)
-    return NextResponse.json({ error: '영수증을 인식하지 못했습니다.' }, { status: 422 })
+    return NextResponse.json(validateReceiptValues(null, today))
   }
 }

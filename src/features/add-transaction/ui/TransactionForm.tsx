@@ -97,6 +97,7 @@ export function TransactionForm({ type, formId, onSubmitData, initialValues }: T
     ...defaultForm(),
     ...initialValues,
   }))
+  const [showRequiredErrors, setShowRequiredErrors] = useState(false)
   const [showNoPaymentModal, setShowNoPaymentModal] = useState(false)
   const { data: paymentMethods = [] } = usePaymentMethods()
 
@@ -109,7 +110,10 @@ export function TransactionForm({ type, formId, onSubmitData, initialValues }: T
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!form.category || !form.amount) return
+    if (!form.category || !form.amount) {
+      setShowRequiredErrors(true)
+      return
+    }
 
     onSubmitData({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -132,7 +136,7 @@ export function TransactionForm({ type, formId, onSubmitData, initialValues }: T
         <label className="text-sm font-medium">
           금액 <span className="text-destructive">*</span>
         </label>
-        <Input size="lg">
+        <Input size="lg" variant={showRequiredErrors && !form.amount ? 'error' : 'default'}>
           <Input.Field
             type="text"
             inputMode="numeric"
@@ -143,6 +147,7 @@ export function TransactionForm({ type, formId, onSubmitData, initialValues }: T
           <Input.Icon>
             <span className="text-sm text-muted-foreground">원</span>
           </Input.Icon>
+          {showRequiredErrors && !form.amount && <Input.Message>금액을 입력해 주세요.</Input.Message>}
         </Input>
       </div>
 
@@ -181,6 +186,9 @@ export function TransactionForm({ type, formId, onSubmitData, initialValues }: T
             )
           })}
         </div>
+        {showRequiredErrors && !form.category && (
+          <p role="alert" className="ml-2 text-sm text-red-500">카테고리를 선택해 주세요.</p>
+        )}
       </div>
 
       {/* 내용 */}

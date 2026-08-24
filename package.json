@@ -28,7 +28,8 @@
     "react-dom": "19.2.3",
     "serwist": "^9.5.7",
     "tailwind-merge": "^3.4.0",
-    "web-push": "^3.6.7"
+    "web-push": "^3.6.7",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^5.0.0",
