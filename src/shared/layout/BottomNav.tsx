@@ -9,8 +9,12 @@ import cn from '@/shared/lib/cn'
 import { useRef, useState } from 'react'
 import { useToast } from '@/app/_providers/ToastProvier'
 import { useAddExpenseMutation } from '@/features/add-transaction/api/addTransaction.mutation'
-import { EXPENSE_CATEGORIES } from '@/shared/constants/transactionCategory'
-import type { ExpenseCategory } from '@/shared/constants/transactionCategory'
+import { ADD_EXPENSE_FORM_ID, AddExpenseForm } from '@/features/add-transaction/ui/AddExpenseForm'
+import { parseReceipt } from '@/features/receipt-scan/api/parseReceipt'
+import type { ReceiptParseResponse } from '@/features/receipt-scan/model/receipt.schema'
+import { ReceiptReviewNotice } from '@/features/receipt-scan/ui/ReceiptReviewNotice'
+import { Button } from '@/shared/ui/Button'
+import { Modal } from '@/shared/ui/Modal'
 
 type NavItem = {
   icon: LucideIcon
@@ -33,6 +37,8 @@ export function BottomNav() {
   const { addToast } = useToast()
   const mutation = useAddExpenseMutation()
   const [isScanning, setIsScanning] = useState(false)
+  const [reviewResult, setReviewResult] = useState<ReceiptParseResponse | null>(null)
+  const [reviewFormKey, setReviewFormKey] = useState(0)
   const cameraInputRef = useRef<HTMLInputElement>(null)
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,41 +46,24 @@ export function BottomNav() {
     if (!file) return
 
     setIsScanning(true)
+    mutation.reset()
     e.target.value = ''
 
     try {
-      const buffer = await file.arrayBuffer()
-      const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)))
-      const mediaType = file.type as 'image/jpeg' | 'image/png' | 'image/webp'
-
-      const res = await fetch('/api/receipt/parse', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: base64, mediaType }),
-      })
-
-      if (!res.ok) throw new Error('parse_failed')
-
-      const data = await res.json()
-      const category = EXPENSE_CATEGORIES.includes(data.category) ? (data.category as ExpenseCategory) : 'ETC'
-
-      if (!data.amount) throw new Error('no_amount')
-
-      await mutation.mutateAsync({
-        type: 'OUT',
-        category,
-        amount: Number(data.amount),
-        isFixed: false,
-        createdAt: data.date ? `${data.date}T00:00:00` : new Date().toISOString(),
-        description: data.description ?? undefined,
-      })
-
-      addToast({ type: 'success', title: '거래내역이 추가됐어요', description: `${Number(data.amount).toLocaleString('ko-KR')}원 · ${data.description ?? ''}` })
+      const result = await parseReceipt(file)
+      setReviewResult(result)
+      setReviewFormKey((key) => key + 1)
     } catch {
       addToast({ type: 'error', title: '영수증 인식 실패', description: '다시 시도해 주세요.' })
     } finally {
       setIsScanning(false)
     }
+  }
+
+  const closeReview = () => {
+    if (mutation.isPending) return
+    setReviewResult(null)
+    mutation.reset()
   }
 
   const renderNavLink = ({ icon: Icon, label, href }: NavItem) => {
@@ -96,7 +85,52 @@ export function BottomNav() {
 
   return (
     <>
-      <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleImageChange} />
+      <input ref={cameraInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" capture="environment" className="hidden" onChange={handleImageChange} />
+
+      <Modal isOpen={reviewResult !== null} onClose={closeReview}>
+        <Modal.Header>인식한 영수증 확인</Modal.Header>
+        <Modal.Content className="max-h-[65vh] overflow-y-auto pt-4">
+          {reviewResult && (
+            <>
+              {reviewResult.reviewFields.length > 0 ? (
+                <ReceiptReviewNotice fields={reviewResult.reviewFields} />
+              ) : (
+                <p className="mb-4 rounded-2xl bg-muted/60 p-3 text-sm">
+                  인식된 내용을 확인한 뒤 거래내역에 추가해 주세요.
+                </p>
+              )}
+              <AddExpenseForm
+                formKey={reviewFormKey}
+                initialValues={{
+                  amount: reviewResult.data.amount ? String(reviewResult.data.amount) : '',
+                  category: reviewResult.data.category,
+                  description: reviewResult.data.description,
+                  date: reviewResult.data.date,
+                }}
+                onSubmitData={(payload) => mutation.mutate(payload, {
+                  onSuccess: () => {
+                    setReviewResult(null)
+                    addToast({
+                      type: 'success',
+                      title: '거래내역이 추가됐어요',
+                      description: `${payload.amount.toLocaleString('ko-KR')}원 · ${payload.description ?? ''}`,
+                    })
+                  },
+                })}
+              />
+            </>
+          )}
+        </Modal.Content>
+        <Modal.Footer>
+          {mutation.isError && <p className="flex-1 text-sm text-destructive">저장하지 못했어요. 다시 시도해 주세요.</p>}
+          <Button variant="outline" size="md" onClick={closeReview} disabled={mutation.isPending}>
+            취소
+          </Button>
+          <Button type="submit" form={ADD_EXPENSE_FORM_ID} size="md" disabled={mutation.isPending}>
+            {mutation.isPending ? '추가 중...' : '확인 후 추가'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
       <nav className="fixed bottom-0 left-0 right-0 bg-card border-t border-border">
         <div className="max-w-107.5 mx-auto flex items-end justify-around px-2 pb-safe">
